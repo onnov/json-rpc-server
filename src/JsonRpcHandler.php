@@ -91,12 +91,12 @@ class JsonRpcHandler
         } catch (ParseErrorException $e) {
             $res['error'] = [
                 'code'    => -32700,
-                'message' => $e->getMessage(), // 'Parse error',
+                'message' => 'Parse error: ' . $e->getMessage(),
             ];
         } catch (InvalidRequestException $e) {
             $res['error'] = [
                 'code'    => -32600,
-                'message' => $e->getMessage(), // 'Invalid Request',
+                'message' => 'Invalid Request: ' . $e->getMessage(),
             ];
         } catch (MethodNotFoundException $e) {
             $res['error'] = [
@@ -112,7 +112,7 @@ class JsonRpcHandler
         } catch (Exception $e) {
             $res['error'] = [
                 'code'    => -32603,
-                'message' => $e->getMessage(), // 'Internal error',
+                'message' => 'Internal error: ' . $e->getMessage(),
                 'data'    => [
                     'exception' => get_class($e),
                     'code'      => $e->getCode(),
