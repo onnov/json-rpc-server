@@ -95,9 +95,7 @@ class ApiExecService
         if ($responseSchemaCheck) {
             /** Валидируем парамертры ОТВЕТА */
             $this->getValidator()->validate(
-                $this->getRpcSchema()->get(
-                    $class->responseSchema()
-                ),
+                $class->responseSchema(),
                 $rpc
             );
         }
