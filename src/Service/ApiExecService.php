@@ -93,10 +93,18 @@ class ApiExecService
         $res = $class->execute(new RpcRequest($rpc));
 
         if ($responseSchemaCheck) {
+            // Обертываем схему, для правильной валидации простых массивов
+            $schema = [
+                'type'       => 'object',
+                'properties' => [
+                    'res' => $class->responseSchema(),
+                ]
+            ];
+
             /** Валидируем парамертры ОТВЕТА */
             $this->getValidator()->validate(
-                $class->responseSchema(),
-                $res
+                $schema,
+                ['res' => $res]
             );
         }
 
