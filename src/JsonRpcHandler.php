@@ -70,7 +70,7 @@ class JsonRpcHandler
                 && in_array(
                     $rpc['method'],
                     $methodsWithoutAuth
-                )
+                ) === false
             ) {
                 throw new InvalidAuthorizeException(
                     'Доступ запрещен, вы не авторизованы'
