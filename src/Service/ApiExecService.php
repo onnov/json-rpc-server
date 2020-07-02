@@ -64,7 +64,7 @@ class ApiExecService
 
         /** Создаем экземпляр класса
          *
-         * @var ApiMethodInterface $class
+         * @var ApiMethodAbstract $class
          */
         $class = $factory->get($method);
 
@@ -89,36 +89,31 @@ class ApiExecService
             $rpc
         );
 
+        /** засетим в метод RpcRequest */
+        if (method_exists($class, 'setRpcRequest')) {
+            $class->setRpcRequest(new RpcRequest($rpc));
+        }
+
         /** Выполним метод */
-        $res = $class->execute(new RpcRequest($rpc));
+        $res = $class->execute();
 
         if ($responseSchemaCheck) {
             // Обертываем схему, для правильной валидации простых массивов
             $schema = [
                 'type'       => 'object',
                 'properties' => [
-                    'res' => $class->responseSchema(),
-                ]
+                    'result' => $class->responseSchema(),
+                ],
             ];
 
             /** Валидируем парамертры ОТВЕТА */
             $this->getValidator()->validate(
                 $schema,
-                ['res' => $res]
+                ['result' => $res]
             );
         }
 
         return $res;
-    }
-
-    /**
-     * @param ApiFactoryInterface $factory
-     * @param string              $className
-     */
-    private function checkClass(
-        ApiFactoryInterface $factory,
-        string $className
-    ): void {
     }
 
     /**

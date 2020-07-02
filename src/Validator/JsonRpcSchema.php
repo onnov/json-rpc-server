@@ -29,8 +29,12 @@ class JsonRpcSchema
         $params = [
             'type' => [
                 'object',
-                'array'
-            ]
+                'array',
+                'string',
+                'number',
+                'boolean',
+                'null',
+            ],
         ];
 
         if (count($paramsSchema) > 0) {
@@ -43,30 +47,30 @@ class JsonRpcSchema
             'additionalProperties' => false,
             'required'             => [
                 'jsonrpc',
-                'method'
+                'method',
             ],
             'properties'           => [
                 'jsonrpc' => [
                     'type' => 'string',
                     'enum' => [
-                        '2.0'
-                    ]
+                        '2.0',
+                    ],
                 ],
                 'method'  => [
                     'type'     => 'string',
                     'examples' => [
-                        'Foo.bar'
-                    ]
+                        'Foo.bar',
+                    ],
                 ],
                 'params'  => $params,
                 'id'      => [
                     'type' => [
                         'string',
                         'null',
-                        'integer'
-                    ]
-                ]
-            ]
+                        'integer',
+                    ],
+                ],
+            ],
         ];
     }
 }
