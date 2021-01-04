@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/onnov/json-rpc-server.svg?branch=master)](https://travis-ci.org/onnov/json-rpc-server)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/onnov/json-rpc-server/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/onnov/json-rpc-server/?branch=master)
+
+
 # Json RPC 2.0 server
 
 ## Install
