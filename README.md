@@ -29,15 +29,26 @@ composer.json
 в файл services.yaml
 
 ### Авторизация
-Если нужна авторизация, авторизируем любым способом,
-результат авторизации записываем в объект ResultAuthModel.
+Json RPC server не занимается авторизацией.
+Если нужна авторизация, авторизуйте пользователя любым способом,
+результат авторизации передайте в метод JsonRpcHandler::run,
+3-м параметром **$resultAuth** в виде true или false.
 
-если успех setSuccess(true);
-иначе setSuccess(false);
+Данный флаг предусмотрен только для того, что бы
+Json RPC server выдал стандартный ответ при отсутствии авторизации.
 
-Если авторизация не требуется, просто создаем объект так:
-$authRes = (new ResultAuthModel())->setSuccess(true);
+Если авторизация не требуется, просто передайте true
+3-м параметром **$resultAuth**.
 
+---
+
+Если API использует авторизацию, но несколько методов должны быть доступны
+без авторизации, такие методы как **login** или **authCheck**
+эти методы можно перечислить в 4-м параметре **$methodsWithoutAuth** в виде массива:
+```php
+$methodsWithoutAuth = ['login', 'authCheck'];
+```
+Эти методы будут доступны независимо от авторизации.
 
 ### Фабрика с методами
 Создаем фабрику с помощью Интерфейса ApiFactoryInterface
@@ -52,17 +63,17 @@ public static function getSubscribedServices(): array
     }
 ```
 
-### Запуск обработкика json rpc
+### Запуск обработчика json rpc
 Создаем объект JsonRpcHandler
 передаем в метод run(
-ApiFactoryInterface $apiFactory,
+        ApiFactoryInterface $apiFactory,
         string $json,
         bool $resultAuth,
         array $methodsWithoutAuth = [],
         bool $responseSchemaCheck = false
 )
 
-метод возвращает объект строку json
+метод возвращает строку json
 
 ```
 use Onnov\JsonRpcServer\JsonRpcHandler;
@@ -95,6 +106,6 @@ jsonRPC запрос может выглядеть так:
   "id": 911
 }
 ```
-ответ формируется в зависимости от того, что вернет метод API.
+Ответ формируется в зависимости от того, что вернет метод API.
 Все, что возвращают методы попадает в `result`
 
