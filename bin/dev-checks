@@ -3,4 +3,4 @@
 vendor/bin/phpcs --config-set encoding utf-8
 vendor/bin/phpcs -p --standard=PSR12 ./src/
 vendor/bin/phpmd src/ text cleancode,codesize,design
-vendor/bin/phpstan analyse src/ --level=5 --no-progress -vvv
+vendor/bin/phpstan analyse src/ --level=7 --no-progress -vvv

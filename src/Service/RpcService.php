@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace Onnov\JsonRpcServer\Service;
 
-use Onnov\JsonRpcServer\Exception\InternalErrorException;
-use Onnov\JsonRpcServer\Exception\InvalidAuthorizeException;
-use Onnov\JsonRpcServer\Exception\InvalidParamsException;
 use Onnov\JsonRpcServer\Exception\InvalidRequestException;
-use Onnov\JsonRpcServer\Exception\MethodNotFoundException;
 use Onnov\JsonRpcServer\Exception\ParseErrorException;
 use Exception;
 use Onnov\JsonRpcServer\Validator\JsonRpcSchema;
@@ -44,7 +40,7 @@ class RpcService
     /**
      * @param string $json
      *
-     * @return array
+     * @return mixed[]
      * @throws ParseErrorException
      * @throws InvalidRequestException
      */
@@ -70,10 +66,26 @@ class RpcService
             );
         }
 
-        /** Проверим RPC */
-        $this->getValidator()->validate($this->getRpcSchema()->get(), $data);
-
         return $data;
+    }
+
+    /**
+     * Проверим RPC
+     *
+     * @param mixed[] $data
+     */
+    public function validateJsonRpc(array $data): void
+    {
+        $this->getValidator()->validate($this->getRpcSchema()->get(), $data);
+    }
+
+    /**
+     * @param mixed[] $data
+     * @return bool
+     */
+    public function isAssoc(array $data): bool
+    {
+        return array_keys($data) !== range(0, count($data) - 1);
     }
 
     /**

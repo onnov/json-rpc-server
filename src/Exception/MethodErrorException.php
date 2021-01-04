@@ -18,22 +18,23 @@ use Throwable;
  *
  * @package Onnov\JsonRpcServer\Exception
  */
-class InvalidParamsException extends RuntimeException
+class MethodErrorException extends RuntimeException
 {
     /** @var mixed[]|null */
     protected $data;
 
     /**
-     * InvalidParamsException constructor.
-     * @param string $message
-     * @param mixed[]|null $data
-     * @param int $code
+     * MethodErrorException constructor.
+     *
+     * @param string         $message
+     * @param int            $code
+     * @param mixed[]          $data
      * @param Throwable|null $previous
      */
     public function __construct(
-        string $message = "",
-        ?array $data = null,
-        int $code = 0,
+        string $message,
+        int $code,
+        array $data = [],
         ?Throwable $previous = null
     ) {
         $this->data = $data;

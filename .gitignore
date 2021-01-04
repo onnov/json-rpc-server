@@ -2,3 +2,5 @@
 composer.lock
 /tmp/
 /vendor/
+/build/
+/.phpunit.result.cache

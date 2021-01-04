@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Onnov\JsonRpcServer;
 
 use Onnov\JsonRpcServer\Model\RpcRequest;
+use Onnov\JsonRpcServer\Model\RpcResultInterface;
 
 /**
  * Class ApiMethodAbstract
@@ -17,9 +18,9 @@ abstract class ApiMethodAbstract implements ApiMethodInterface
     protected $rpcRequest;
 
     /**
-     * @return array|string|int|float|null
+     * @return RpcResultInterface
      */
-    abstract public function execute();
+    abstract public function execute(): RpcResultInterface;
 
     /**
      * @return mixed[]

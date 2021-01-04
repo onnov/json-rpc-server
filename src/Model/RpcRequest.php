@@ -18,7 +18,7 @@ class RpcRequest
     /**
      * RpcRequest constructor.
      *
-     * @param array $validRpc
+     * @param mixed[] $validRpc
      */
     public function __construct(array $validRpc)
     {

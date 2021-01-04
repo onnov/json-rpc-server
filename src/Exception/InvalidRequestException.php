@@ -2,7 +2,7 @@
 
 /**
  * Created by PhpStorm.
- * Project: logohost.dev
+ * Project: json_rpc_server
  * User: sv
  * Date: 24.06.19
  * Time: 17:55

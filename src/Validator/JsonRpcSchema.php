@@ -2,7 +2,7 @@
 
 /**
  * Created by PhpStorm.
- * Project: cpa
+ * Project: json_rpc_server
  * User: sv
  * Date: 23.03.2020
  * Time: 12:53

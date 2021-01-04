@@ -2,7 +2,7 @@
 
 /**
  * Created by PhpStorm.
- * Project: logohost.dev
+ * Project: json_rpc_server
  * User: sv
  * Date: 25.06.19
  * Time: 7:54
@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Onnov\JsonRpcServer\Service;
 
+use Onnov\JsonRpcServer\ApiMethodAbstract;
 use Onnov\JsonRpcServer\ApiMethodInterface;
 use Onnov\JsonRpcServer\ApiFactoryInterface;
 use Onnov\JsonRpcServer\Exception\InternalErrorException;
@@ -44,7 +45,7 @@ class ApiExecService
 
     /**
      * @param ApiFactoryInterface $factory
-     * @param array               $rpc
+     * @param mixed[]               $rpc
      * @param bool                $responseSchemaCheck
      *
      * @return mixed
@@ -69,12 +70,10 @@ class ApiExecService
         $class = $factory->get($method);
 
         /** Проверим соответствие интерфейсу */
-        $interfaces = class_implements($class);
-        if ($interfaces === false
-            || in_array(
-                ApiMethodInterface::class,
-                $interfaces
-            ) === false
+        $interfaces = (array)class_implements($class);
+        if (
+            (bool)$interfaces === false
+            || in_array(ApiMethodInterface::class, $interfaces, true) === false
         ) {
             throw new InternalErrorException(
                 'Method "' . $method . '" does not match Interface'
@@ -90,12 +89,10 @@ class ApiExecService
         );
 
         /** засетим в метод RpcRequest */
-        if (method_exists($class, 'setRpcRequest')) {
-            $class->setRpcRequest(new RpcRequest($rpc));
-        }
+        $class->setRpcRequest(new RpcRequest($rpc));
 
         /** Выполним метод */
-        $res = $class->execute();
+        $res = $class->execute()->getResult();
 
         if ($responseSchemaCheck) {
             // Обертываем схему, для правильной валидации простых массивов

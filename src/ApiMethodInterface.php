@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Onnov\JsonRpcServer;
 
+use Onnov\JsonRpcServer\Model\RpcResultInterface;
+
 /**
  * Interface ApiMethodInterface
  *
@@ -20,9 +22,9 @@ namespace Onnov\JsonRpcServer;
 interface ApiMethodInterface
 {
     /**
-     * @return array|string|int|float|null
+     * @return RpcResultInterface
      */
-    public function execute();
+    public function execute(): RpcResultInterface;
 
     /**
      * @return mixed[]

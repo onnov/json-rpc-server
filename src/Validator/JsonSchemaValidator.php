@@ -2,7 +2,7 @@
 
 /**
  * Created by PhpStorm.
- * Project: cpa
+ * Project: json_rpc_server
  * User: sv
  * Date: 23.03.2020
  * Time: 12:38
@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace Onnov\JsonRpcServer\Validator;
 
+use JsonException;
 use Opis\JsonSchema\Validator;
 use Opis\JsonSchema\ValidationResult;
 use Opis\JsonSchema\ValidationError;
@@ -62,7 +63,7 @@ class JsonSchemaValidator
             }
 
             throw new InvalidParamsException(
-                'Ошибка валидации данных',
+                'Data validation error', // 'Ошибка валидации данных',
                 $data
             );
         }
@@ -71,10 +72,11 @@ class JsonSchemaValidator
     /**
      * @param mixed[] $array
      * @return string
+     * @throws JsonException
      */
     public function arrayToJson(array $array): string
     {
-        return json_encode($array);
+        return json_encode($array, JSON_THROW_ON_ERROR);
     }
 
     /**

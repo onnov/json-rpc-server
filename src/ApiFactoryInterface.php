@@ -15,7 +15,7 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
 interface ApiFactoryInterface extends ServiceSubscriberInterface, ContainerInterface
 {
     /**
-     * @return array
+     * @return mixed[]
      */
     public static function getSubscribedServices(): array;
 
