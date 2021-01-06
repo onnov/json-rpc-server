@@ -18,7 +18,7 @@ class RpcRequest
     private $params;
 
     /**
-     * parameters in a custom object
+     * parameters in a custom php object
      *
      * @var object|null
      */

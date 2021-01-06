@@ -27,14 +27,17 @@ abstract class ApiMethodAbstract implements ApiMethodInterface
     abstract public function execute(): RpcResultInterface;
 
     /**
-     * @return stdClass|null
-     */
-    abstract public function requestSchema(): ?stdClass;
-
-    /**
+     * custom php object for mapping request params
+     * or null if not required
+     *
      * @return object|null
      */
     abstract public function customParamsObject(): ?object;
+
+    /**
+     * @return stdClass|null
+     */
+    abstract public function requestSchema(): ?stdClass;
 
     /**
      * @return stdClass|null
