@@ -17,6 +17,7 @@ use Onnov\JsonRpcServer\ApiMethodAbstract;
 use Onnov\JsonRpcServer\Exception\ParseErrorException;
 use Onnov\JsonRpcServer\JsonRpcHandler;
 use Onnov\JsonRpcServer\Model\RpcResultSuccess;
+use Onnov\JsonRpcServer\Model\RunModel;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -35,9 +36,10 @@ class RunTest extends TestCase
         $handler = new JsonRpcHandler();
 
         $res = $handler->run(
-            $this->getFactory(),
-            $jsonIn,
-            true
+            new RunModel(
+                $this->getFactory(),
+                $jsonIn
+            )
         );
 
         self::assertStringContainsString(
@@ -63,9 +65,10 @@ class RunTest extends TestCase
         $this->expectException(ParseErrorException::class);
 
         $handler->run(
-            $this->getFactory(),
-            'any not json',
-            true
+            new RunModel(
+                $this->getFactory(),
+                'any not json'
+            )
         );
     }
 
@@ -74,9 +77,10 @@ class RunTest extends TestCase
         $handler = new JsonRpcHandler();
 
         $res = $handler->run(
-            $this->getFactory(false),
-            '{"jsonrpc": "2.0", "method": "test", "id": 777}',
-            true
+            new RunModel(
+                $this->getFactory(false),
+                '{"jsonrpc": "2.0", "method": "test", "id": 777}'
+            )
         );
 
         self::assertStringContainsString(
@@ -90,14 +94,15 @@ class RunTest extends TestCase
         $handler = new JsonRpcHandler();
 
         $res = $handler->run(
-            $this->getFactory(),
-            '{"jsonrpc": "3.0", "method": "test", "id": 777}',
-            true
+            new RunModel(
+                $this->getFactory(),
+                '{"jsonrpc": "3.0", "method": "test", "id": 777}'
+            )
         );
 
         self::assertStringContainsString(
             '{"jsonrpc":"2.0","error":{"code":-32602,"message":"Data validation error",'
-            . '"data":{"enum":[{"expected":["2.0"]},["jsonrpc"]]}},"id":777}',
+            . '"data":{"enum":[["jsonRpc","jsonrpc"],{"expected":["2.0"]}]}},"id":777}',
             $res
         );
     }
@@ -107,9 +112,11 @@ class RunTest extends TestCase
         $handler = new JsonRpcHandler();
 
         $res = $handler->run(
-            $this->getFactory(),
-            '{"jsonrpc": "2.0", "method": "test", "id": 777}',
-            false
+            new RunModel(
+                $this->getFactory(),
+                '{"jsonrpc": "2.0", "method": "test", "id": 777}',
+                false
+            )
         );
 
         self::assertStringContainsString(
@@ -123,11 +130,12 @@ class RunTest extends TestCase
         $handler = new JsonRpcHandler();
 
         $res = $handler->run(
-            $this->getFactory(),
-            '{"jsonrpc": "2.0", "method": "test", "id": 777}',
-            false,
-            ['test']
-            //           $responseSchemaCheck
+            new RunModel(
+                $this->getFactory(),
+                '{"jsonrpc": "2.0", "method": "test", "id": 777}',
+                false,
+                ['test']
+            )
         );
 
         self::assertStringContainsString(

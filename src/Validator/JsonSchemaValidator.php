@@ -66,8 +66,8 @@ class JsonSchemaValidator
             $errData = [];
             foreach ($errors as $error) {
                 $errData[$error->keyword()] = [
-                    $error->keywordArgs(),
-                    $error->dataPointer()
+                    $error->dataPointer(),
+                    $error->keywordArgs()
                 ];
             }
 
