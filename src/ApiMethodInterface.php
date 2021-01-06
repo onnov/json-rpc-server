@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Onnov\JsonRpcServer;
 
 use Onnov\JsonRpcServer\Model\RpcResultInterface;
+use stdClass;
 
 /**
  * Interface ApiMethodInterface
@@ -27,12 +28,12 @@ interface ApiMethodInterface
     public function execute(): RpcResultInterface;
 
     /**
-     * @return mixed[]
+     * @return stdClass|null
      */
-    public function requestSchema(): array;
+    public function requestSchema(): ?stdClass;
 
     /**
-     * @return mixed[]
+     * @return stdClass|null
      */
-    public function responseSchema(): array;
+    public function responseSchema(): ?stdClass;
 }

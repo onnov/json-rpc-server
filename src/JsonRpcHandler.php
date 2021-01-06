@@ -7,6 +7,7 @@ namespace Onnov\JsonRpcServer;
 use JsonException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
+use stdClass;
 use Throwable;
 use Onnov\JsonRpcServer\Exception\InvalidAuthorizeException;
 use Onnov\JsonRpcServer\Exception\InvalidParamsException;
@@ -30,25 +31,25 @@ class JsonRpcHandler
     private $logger;
 
     /** @var RpcService */
-    private $rpc;
+    private $rpcService;
 
     /** @var ApiExecService */
-    private $apiExec;
+    private $apiExecService;
 
     /**
      * JsonRpcHandler constructor.
      *
      * @param LoggerInterface|null $logger
      */
-    public function __construct(LoggerInterface $logger = null)
+    public function __construct(bool $responseSchemaCheck = false, LoggerInterface $logger = null)
     {
         $this->logger = $logger;
 
         $validator = new JsonSchemaValidator();
         $rpcSchema = new JsonRpcSchema();
 
-        $this->rpc = new RpcService($validator, $rpcSchema);
-        $this->apiExec = new ApiExecService($validator, $rpcSchema);
+        $this->rpcService = new RpcService($validator, $rpcSchema);
+        $this->apiExecService = new ApiExecService($validator, $rpcSchema, $responseSchemaCheck);
     }
 
     /**
@@ -56,7 +57,6 @@ class JsonRpcHandler
      * @param string              $json
      * @param bool                $resultAuth
      * @param string[]            $methodsWithoutAuth
-     * @param bool                $responseSchemaCheck
      *
      * @return string
      */
@@ -64,20 +64,12 @@ class JsonRpcHandler
         ApiFactoryInterface $apiFactory,
         string $json,
         bool $resultAuth,
-        array $methodsWithoutAuth = [],
-        bool $responseSchemaCheck = false
+        array $methodsWithoutAuth = []
     ): string {
-        $rpcService = $this->getRpc();
+        $rpcService = $this->getRpcService();
 
         /** Парсим */
         $data = $rpcService->jsonParse($json);
-
-        $batch = true;
-        /** Проверим не batch request */
-        if ($rpcService->isAssoc($data)) {
-            $data = [$data];
-            $batch = false;
-        }
 
         $resArr = [];
         foreach ($data as $rpc) {
@@ -86,14 +78,13 @@ class JsonRpcHandler
                 $apiFactory,
                 $rpc,
                 $resultAuth,
-                $methodsWithoutAuth,
-                $responseSchemaCheck
+                $methodsWithoutAuth
             );
         }
 
         $res = implode(',', $resArr);
 
-        if ($batch) {
+        if ($rpcService->isBatch()) {
             $res = '[' . $res . ']';
         }
 
@@ -102,19 +93,17 @@ class JsonRpcHandler
 
     /**
      * @param ApiFactoryInterface $apiFactory
-     * @param mixed[]             $rpc
+     * @param stdClass            $rpc
      * @param bool                $resultAuth
      * @param string[]            $methodsWithoutAuth
-     * @param bool                $responseSchemaCheck
      *
      * @return string
      */
     private function oneRun(
         ApiFactoryInterface $apiFactory,
-        array $rpc,
+        stdClass $rpc,
         bool $resultAuth,
-        array $methodsWithoutAuth = [],
-        bool $responseSchemaCheck = false
+        array $methodsWithoutAuth = []
     ): string {
         $res = [
             'jsonrpc' => '2.0',
@@ -123,17 +112,16 @@ class JsonRpcHandler
         $errorLevel = null;
 
         try {
-            /** валидируем JsonRPC */
-            $this->getRpc()->validateJsonRpc($rpc);
+            /** валидируем и парсим JsonRPC */
+            $rpcObj = $this->getRpcService()->getRpc($rpc);
 
             /** Проверим авторизацию */
-            $this->authCheck($rpc, $resultAuth, $methodsWithoutAuth);
+            $this->authCheck($rpcObj->getMethod(), $resultAuth, $methodsWithoutAuth);
 
             /** Пытаемся выполнить запрос */
-            $res['result'] = $this->getApiExec()->exe(
+            $res['result'] = $this->getApiExeService()->exe(
                 $apiFactory,
-                $rpc,
-                $responseSchemaCheck
+                $rpcObj
             );
         } catch (InvalidAuthorizeException $e) {
             $res['error'] = [
@@ -193,15 +181,15 @@ class JsonRpcHandler
     }
 
     /**
-     * @param mixed[]  $rpc
-     * @param bool     $resultAuth
+     * @param string $method
+     * @param bool $resultAuth
      * @param string[] $methodsWithoutAuth
      */
-    private function authCheck(array &$rpc, bool $resultAuth, array $methodsWithoutAuth): void
+    private function authCheck(string $method, bool $resultAuth, array $methodsWithoutAuth): void
     {
         if (
             $resultAuth === false
-            && in_array($rpc['method'], $methodsWithoutAuth, true) === false
+            && in_array($method, $methodsWithoutAuth, true) === false
         ) {
             throw new InvalidAuthorizeException(
                 'Access denied, you are not authorized', // 'Доступ запрещен, вы не авторизованы'
@@ -210,16 +198,17 @@ class JsonRpcHandler
     }
 
     /**
-     * @param mixed[] $rpc
+     * @param stdClass $rpc
      * @param mixed[] $res
      * @return string
      */
-    private function getJsonResult(array &$rpc, array &$res): string
+    private function getJsonResult(stdClass $rpc, array &$res): string
     {
-        $strId = 'null';
-        if (isset($rpc['id'])) {
-            $res['id'] = $rpc['id'];
-            $strId = $rpc['id'];
+        // ???
+        $strId = 'error';
+        if (isset($rpc->id)) {
+            $res['id'] = $rpc->id;
+            $strId = $rpc->id;
         }
 
         try {
@@ -264,16 +253,16 @@ class JsonRpcHandler
     /**
      * @return RpcService
      */
-    public function getRpc(): RpcService
+    public function getRpcService(): RpcService
     {
-        return $this->rpc;
+        return $this->rpcService;
     }
 
     /**
      * @return ApiExecService
      */
-    public function getApiExec(): ApiExecService
+    public function getApiExeService(): ApiExecService
     {
-        return $this->apiExec;
+        return $this->apiExecService;
     }
 }

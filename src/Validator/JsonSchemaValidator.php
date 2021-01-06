@@ -12,14 +12,10 @@ declare(strict_types=1);
 
 namespace Onnov\JsonRpcServer\Validator;
 
-use JsonException;
 use Opis\JsonSchema\Validator;
-use Opis\JsonSchema\ValidationResult;
-use Opis\JsonSchema\ValidationError;
 use Opis\JsonSchema\Schema;
 use stdClass;
 use Onnov\JsonRpcServer\Exception\InvalidParamsException;
-use Onnov\JsonRpcServer\Exception\InvalidRequestException;
 
 /**
  * Class JsonSchemaValidator
@@ -39,24 +35,33 @@ class JsonSchemaValidator
     }
 
     /**
-     * @param mixed[] $arrSchema
-     * @param mixed[] $arrData
+     * @param stdClass $schema
+     * @param stdClass $data
      */
-    public function validate(array $arrSchema, array $arrData): void
+    public function validate(stdClass $schema, stdClass $data): void
     {
-        /** @var ValidationResult $result */
+        // Обернем Параметры, для правильной валидации
+        $dataPlus = (object)['data' => $data];
+
+        // Обернем схему, для правильной валидации
+        $schemaPlus = (object)[
+            'type'       => 'object',
+            'properties' => (object)[
+                'data' => $schema,
+            ],
+        ];
+
         $result = $this->getValidator()->schemaValidation(
-            $this->arrayToObject($arrData),
-            new Schema($this->arrayToObject($arrSchema)),
+            $dataPlus,
+            new Schema($schemaPlus),
             10
         );
 
         if (!$result->isValid()) {
-            /** @var ValidationError[] $errors */
             $errors = $result->getErrors();
-            $data = [];
+            $errData = [];
             foreach ($errors as $error) {
-                $data[$error->keyword()] = [
+                $errData[$error->keyword()] = [
                     $error->keywordArgs(),
                     $error->dataPointer()
                 ];
@@ -64,46 +69,9 @@ class JsonSchemaValidator
 
             throw new InvalidParamsException(
                 'Data validation error', // 'Ошибка валидации данных',
-                $data
+                $errData
             );
         }
-    }
-
-    /**
-     * @param mixed[] $array
-     * @return string
-     * @throws JsonException
-     */
-    public function arrayToJson(array $array): string
-    {
-        return json_encode($array, JSON_THROW_ON_ERROR);
-    }
-
-    /**
-     * @param string $json
-     * @return stdClass
-     */
-    public function jsonToObject(string $json): stdClass
-    {
-        $res =  json_decode($json);
-
-        // Если не смогли преобразовать в объект значит это не json rpc запрос
-        if (is_array($res)) {
-            throw new InvalidRequestException(
-                'The JSON sent is not a valid Request object.'
-            );
-        }
-
-        return $res;
-    }
-
-    /**
-     * @param mixed[] $array
-     * @return stdClass|null
-     */
-    public function arrayToObject(array $array): ?stdClass
-    {
-        return $this->jsonToObject($this->arrayToJson($array));
     }
 
     /**

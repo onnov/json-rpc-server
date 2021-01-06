@@ -6,6 +6,8 @@ namespace Onnov\JsonRpcServer;
 
 use Onnov\JsonRpcServer\Model\RpcRequest;
 use Onnov\JsonRpcServer\Model\RpcResultInterface;
+use Onnov\JsonRpcServer\Traits\JsonHelperTrait;
+use stdClass;
 
 /**
  * Class ApiMethodAbstract
@@ -14,6 +16,8 @@ use Onnov\JsonRpcServer\Model\RpcResultInterface;
  */
 abstract class ApiMethodAbstract implements ApiMethodInterface
 {
+    use JsonHelperTrait;
+
     /** @var RpcRequest */
     protected $rpcRequest;
 
@@ -23,14 +27,19 @@ abstract class ApiMethodAbstract implements ApiMethodInterface
     abstract public function execute(): RpcResultInterface;
 
     /**
-     * @return mixed[]
+     * @return stdClass|null
      */
-    abstract public function requestSchema(): array;
+    abstract public function requestSchema(): ?stdClass;
 
     /**
-     * @return mixed[]
+     * @return object|null
      */
-    abstract public function responseSchema(): array;
+    abstract public function customParamsObject(): ?object;
+
+    /**
+     * @return stdClass|null
+     */
+    abstract public function responseSchema(): ?stdClass;
 
     /**
      * @return RpcRequest

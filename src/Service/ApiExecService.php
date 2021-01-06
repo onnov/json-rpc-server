@@ -12,50 +12,65 @@ declare(strict_types=1);
 
 namespace Onnov\JsonRpcServer\Service;
 
+use JsonMapper;
+use JsonMapper_Exception;
 use Onnov\JsonRpcServer\ApiMethodAbstract;
 use Onnov\JsonRpcServer\ApiMethodInterface;
 use Onnov\JsonRpcServer\ApiFactoryInterface;
 use Onnov\JsonRpcServer\Exception\InternalErrorException;
 use Onnov\JsonRpcServer\Exception\MethodNotFoundException;
+use Onnov\JsonRpcServer\Exception\ParseErrorException;
+use Onnov\JsonRpcServer\Model\RpcModel;
 use Onnov\JsonRpcServer\Model\RpcRequest;
+use Onnov\JsonRpcServer\Traits\JsonHelperTrait;
 use Onnov\JsonRpcServer\Validator\JsonRpcSchema;
 use Onnov\JsonRpcServer\Validator\JsonSchemaValidator;
 
 class ApiExecService
 {
+    use JsonHelperTrait;
+
     /** @var JsonSchemaValidator */
     protected $validator;
 
     /** @var JsonRpcSchema */
     protected $rpcSchema;
 
+    /** @var JsonMapper */
+    private $mapper;
+
+    /** @var bool */
+    protected $responseSchemaCheck;
+
     /**
      * ApiExecService constructor.
      *
      * @param JsonSchemaValidator $validator
-     * @param JsonRpcSchema       $rpcSchema
+     * @param JsonRpcSchema $rpcSchema
+     * @param bool $responseSchemaCheck
      */
     public function __construct(
         JsonSchemaValidator $validator,
-        JsonRpcSchema $rpcSchema
+        JsonRpcSchema $rpcSchema,
+        bool $responseSchemaCheck
     ) {
         $this->validator = $validator;
         $this->rpcSchema = $rpcSchema;
+        $this->mapper = new JsonMapper();
+        $this->responseSchemaCheck = $responseSchemaCheck;
     }
 
     /**
      * @param ApiFactoryInterface $factory
-     * @param mixed[]               $rpc
-     * @param bool                $responseSchemaCheck
+     * @param RpcModel            $rpc
      *
      * @return mixed
      */
     public function exe(
         ApiFactoryInterface $factory,
-        array $rpc,
-        bool $responseSchemaCheck
+        RpcModel $rpc
     ) {
-        $method = $rpc['method'];
+        $method = $rpc->getMethod();
         /** Проверим существование метода */
         if ($factory->has($method) === false) {
             throw new MethodNotFoundException(
@@ -81,32 +96,37 @@ class ApiExecService
         }
 
         /** Валидируем парамертры ЗАПРОСА */
-        $this->getValidator()->validate(
-            $this->getRpcSchema()->get(
-                $class->requestSchema()
-            ),
-            $rpc
-        );
+        if ($class->requestSchema() !== null) {
+            $this->getValidator()->validate(
+                $class->requestSchema(),
+                $rpc->getParams()
+            );
+        }
+
+        $paramsObject = null;
+        if ($class->customParamsObject() !== null) {
+            try {
+                $paramsObject = $this->getMapper()->map($rpc->getParams(), $class->customParamsObject());
+            } catch (JsonMapper_Exception $e) {
+                throw new ParseErrorException(
+                    $e->getMessage(),
+                    $e->getCode(),
+                    $e->getPrevious()
+                );
+            }
+        }
 
         /** засетим в метод RpcRequest */
-        $class->setRpcRequest(new RpcRequest($rpc));
+        $class->setRpcRequest(new RpcRequest($rpc, $paramsObject));
 
         /** Выполним метод */
         $res = $class->execute()->getResult();
 
-        if ($responseSchemaCheck) {
-            // Обертываем схему, для правильной валидации простых массивов
-            $schema = [
-                'type'       => 'object',
-                'properties' => [
-                    'result' => $class->responseSchema(),
-                ],
-            ];
-
+        if ($this->isResponseSchemaCheck() && $class->responseSchema() !== null) {
             /** Валидируем парамертры ОТВЕТА */
             $this->getValidator()->validate(
-                $schema,
-                ['result' => $res]
+                $class->responseSchema(),
+                $res
             );
         }
 
@@ -127,5 +147,21 @@ class ApiExecService
     public function getRpcSchema(): JsonRpcSchema
     {
         return $this->rpcSchema;
+    }
+
+    /**
+     * @return JsonMapper
+     */
+    public function getMapper(): JsonMapper
+    {
+        return $this->mapper;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isResponseSchemaCheck(): bool
+    {
+        return $this->responseSchemaCheck;
     }
 }
