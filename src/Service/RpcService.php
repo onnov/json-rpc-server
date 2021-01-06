@@ -96,7 +96,8 @@ class RpcService
             ->getValidator()
             ->validate(
                 $this->getRpcSchema()->get(),
-                $data
+                $data,
+                'jsonRpc'
             );
     }
 

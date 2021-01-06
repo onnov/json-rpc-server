@@ -96,7 +96,8 @@ class ApiExecService
         if ($class->requestSchema() !== null) {
             $this->getValidator()->validate(
                 $class->requestSchema(),
-                $rpc->getParams()
+                $rpc->getParams(),
+                'requestParams'
             );
         }
 
@@ -123,7 +124,8 @@ class ApiExecService
             /** Валидируем парамертры ОТВЕТА */
             $this->getValidator()->validate(
                 $class->responseSchema(),
-                $res
+                $res,
+                'responseParams'
             );
         }
 

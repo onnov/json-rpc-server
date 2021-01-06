@@ -40,17 +40,18 @@ class JsonSchemaValidator
     /**
      * @param stdClass $schema
      * @param stdClass|scalar|null $data
+     * @param string $dataName
      */
-    public function validate(stdClass $schema, $data): void
+    public function validate(stdClass $schema, $data, string $dataName = 'data'): void
     {
         // Обернем Параметры, для правильной валидации
-        $dataPlus = (object)['data' => $data];
+        $dataPlus = (object)[$dataName => $data];
 
         // Обернем схему, для правильной валидации
         $schemaPlus = (object)[
             'type'       => 'object',
             'properties' => (object)[
-                'data' => $schema,
+                $dataName => $schema,
             ],
         ];
 
