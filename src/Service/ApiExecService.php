@@ -16,12 +16,12 @@ use JsonMapper;
 use JsonMapper_Exception;
 use Onnov\JsonRpcServer\ApiMethodAbstract;
 use Onnov\JsonRpcServer\ApiMethodInterface;
-use Onnov\JsonRpcServer\ApiFactoryInterface;
 use Onnov\JsonRpcServer\Exception\InternalErrorException;
 use Onnov\JsonRpcServer\Exception\MethodNotFoundException;
 use Onnov\JsonRpcServer\Exception\ParseErrorException;
 use Onnov\JsonRpcServer\Model\RpcModel;
 use Onnov\JsonRpcServer\Model\RpcRequest;
+use Onnov\JsonRpcServer\Model\RunModel;
 use Onnov\JsonRpcServer\Traits\JsonHelperTrait;
 use Onnov\JsonRpcServer\Validator\JsonRpcSchema;
 use Onnov\JsonRpcServer\Validator\JsonSchemaValidator;
@@ -39,37 +39,34 @@ class ApiExecService
     /** @var JsonMapper */
     private $mapper;
 
-    /** @var bool */
-    protected $responseSchemaCheck;
-
     /**
      * ApiExecService constructor.
      *
      * @param JsonSchemaValidator $validator
      * @param JsonRpcSchema $rpcSchema
-     * @param bool $responseSchemaCheck
+     * @param JsonMapper $mapper
      */
     public function __construct(
         JsonSchemaValidator $validator,
         JsonRpcSchema $rpcSchema,
-        bool $responseSchemaCheck
+        JsonMapper $mapper
     ) {
         $this->validator = $validator;
         $this->rpcSchema = $rpcSchema;
-        $this->mapper = new JsonMapper();
-        $this->responseSchemaCheck = $responseSchemaCheck;
+        $this->mapper = $mapper;
     }
 
     /**
-     * @param ApiFactoryInterface $factory
-     * @param RpcModel            $rpc
+     * @param RunModel $model
+     * @param RpcModel $rpc
      *
      * @return mixed
      */
     public function exe(
-        ApiFactoryInterface $factory,
+        RunModel $model,
         RpcModel $rpc
     ) {
+        $factory = $model->getApiFactory();
         $method = $rpc->getMethod();
         /** Проверим существование метода */
         if ($factory->has($method) === false) {
@@ -122,7 +119,7 @@ class ApiExecService
         /** Выполним метод */
         $res = $class->execute()->getResult();
 
-        if ($this->isResponseSchemaCheck() && $class->responseSchema() !== null) {
+        if ($model->isResponseCheck() && $class->responseSchema() !== null) {
             /** Валидируем парамертры ОТВЕТА */
             $this->getValidator()->validate(
                 $class->responseSchema(),
@@ -155,13 +152,5 @@ class ApiExecService
     public function getMapper(): JsonMapper
     {
         return $this->mapper;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isResponseSchemaCheck(): bool
-    {
-        return $this->responseSchemaCheck;
     }
 }

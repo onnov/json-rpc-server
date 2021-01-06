@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Onnov\JsonRpcServer;
 
 use JsonException;
+use JsonMapper;
+use Onnov\JsonRpcServer\Model\RunModel;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use stdClass;
@@ -41,44 +43,35 @@ class JsonRpcHandler
      *
      * @param LoggerInterface|null $logger
      */
-    public function __construct(bool $responseSchemaCheck = false, LoggerInterface $logger = null)
+    public function __construct(LoggerInterface $logger = null)
     {
         $this->logger = $logger;
 
         $validator = new JsonSchemaValidator();
         $rpcSchema = new JsonRpcSchema();
+        $mapper = new JsonMapper();
 
-        $this->rpcService = new RpcService($validator, $rpcSchema);
-        $this->apiExecService = new ApiExecService($validator, $rpcSchema, $responseSchemaCheck);
+        $this->rpcService = new RpcService($validator, $rpcSchema, $mapper);
+        $this->apiExecService = new ApiExecService($validator, $rpcSchema, $mapper);
     }
 
     /**
-     * @param ApiFactoryInterface $apiFactory
-     * @param string              $json
-     * @param bool                $resultAuth
-     * @param string[]            $methodsWithoutAuth
-     *
+     * @param RunModel $model
      * @return string
      */
-    public function run(
-        ApiFactoryInterface $apiFactory,
-        string $json,
-        bool $resultAuth,
-        array $methodsWithoutAuth = []
-    ): string {
+    public function run(RunModel $model): string
+    {
         $rpcService = $this->getRpcService();
 
         /** Парсим */
-        $data = $rpcService->jsonParse($json);
+        $data = $rpcService->jsonParse($model->getJson());
 
         $resArr = [];
         foreach ($data as $rpc) {
             // TODO впилить паралельное выполнение, возможно amphp/amp
             $resArr[] = $this->oneRun(
-                $apiFactory,
-                $rpc,
-                $resultAuth,
-                $methodsWithoutAuth
+                $model,
+                $rpc
             );
         }
 
@@ -92,18 +85,13 @@ class JsonRpcHandler
     }
 
     /**
-     * @param ApiFactoryInterface $apiFactory
-     * @param stdClass            $rpc
-     * @param bool                $resultAuth
-     * @param string[]            $methodsWithoutAuth
-     *
+     * @param RunModel $model
+     * @param stdClass $rpc
      * @return string
      */
     private function oneRun(
-        ApiFactoryInterface $apiFactory,
-        stdClass $rpc,
-        bool $resultAuth,
-        array $methodsWithoutAuth = []
+        RunModel $model,
+        stdClass $rpc
     ): string {
         $res = [
             'jsonrpc' => '2.0',
@@ -116,11 +104,11 @@ class JsonRpcHandler
             $rpcObj = $this->getRpcService()->getRpc($rpc);
 
             /** Проверим авторизацию */
-            $this->authCheck($rpcObj->getMethod(), $resultAuth, $methodsWithoutAuth);
+            $this->authCheck($rpcObj->getMethod(), $model->isResultAuth(), $model->getMethodsWithoutAuth());
 
             /** Пытаемся выполнить запрос */
             $res['result'] = $this->getApiExeService()->exe(
-                $apiFactory,
+                $model,
                 $rpcObj
             );
         } catch (InvalidAuthorizeException $e) {

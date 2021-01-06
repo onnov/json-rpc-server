@@ -36,15 +36,17 @@ class RpcService
      * RpcService constructor.
      *
      * @param JsonSchemaValidator $validator
-     * @param JsonRpcSchema       $rpcSchema
+     * @param JsonRpcSchema $rpcSchema
+     * @param JsonMapper $mapper
      */
     public function __construct(
         JsonSchemaValidator $validator,
-        JsonRpcSchema $rpcSchema
+        JsonRpcSchema $rpcSchema,
+        JsonMapper $mapper
     ) {
         $this->validator = $validator;
         $this->rpcSchema = $rpcSchema;
-        $this->mapper = new JsonMapper();
+        $this->mapper = $mapper;
     }
 
     /**
