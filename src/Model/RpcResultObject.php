@@ -4,30 +4,27 @@
  * Created by PhpStorm.
  * Project: json-rpc-server
  * User: sv
- * Date: 03.07.2020
- * Time: 15:32
+ * Date: 06.01.2021
+ * Time: 22:00
  */
 
 declare(strict_types=1);
 
 namespace Onnov\JsonRpcServer\Model;
 
-use Onnov\JsonRpcServer\Traits\JsonHelperTrait;
 use stdClass;
 
 /**
- * Class RpcResultAbstractNull
+ * Class RpcResultObject
  * @package Onnov\JsonRpcServer\Model
  */
-class RpcResultArray extends RpcResultAbstract
+class RpcResultObject extends RpcResultAbstract
 {
-    use JsonHelperTrait;
-
     /**
      * RpcResultArray constructor.
-     * @param mixed[] $result
+     * @param stdClass $result
      */
-    public function __construct(array $result)
+    public function __construct(stdClass $result)
     {
         $this->result = $result;
     }
@@ -37,6 +34,6 @@ class RpcResultArray extends RpcResultAbstract
      */
     public function getResult(): stdClass
     {
-        return $this->arrayToObject($this->result);
+        return $this->result;
     }
 }
