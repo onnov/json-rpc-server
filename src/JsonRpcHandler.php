@@ -64,7 +64,12 @@ class JsonRpcHandler
         $rpcService = $this->getRpcService();
 
         /** Парсим */
-        $data = $rpcService->jsonParse($model->getJson());
+        try {
+            $data = $rpcService->jsonParse($model->getJson());
+        } catch (ParseErrorException $e) {
+            return '{"jsonrpc": "2.0", "error": {"code": -32700, "message": "'
+                . $e->getMessage() . '"}, "id": null}';
+        }
 
         $resArr = [];
         foreach ($data as $rpc) {
