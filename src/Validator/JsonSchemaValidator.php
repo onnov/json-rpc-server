@@ -39,11 +39,15 @@ class JsonSchemaValidator
 
     /**
      * @param stdClass $schema
-     * @param stdClass|scalar|null $data
+     * @param stdClass|mixed[]|scalar|null $data
      * @param string $dataName
      */
     public function validate(stdClass $schema, $data, string $dataName = 'data'): void
     {
+        if (is_array($data)) {
+            $data = $this->arrayToObject($data);
+        }
+
         // Обернем Параметры, для правильной валидации
         $dataPlus = (object)[$dataName => $data];
 

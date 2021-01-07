@@ -12,17 +12,12 @@ declare(strict_types=1);
 
 namespace Onnov\JsonRpcServer\Model;
 
-use Onnov\JsonRpcServer\Traits\JsonHelperTrait;
-use stdClass;
-
 /**
  * Class RpcResultAbstractNull
  * @package Onnov\JsonRpcServer\Model
  */
 class RpcResultArray extends RpcResultAbstract
 {
-    use JsonHelperTrait;
-
     /**
      * RpcResultArray constructor.
      * @param mixed[] $result
@@ -33,10 +28,10 @@ class RpcResultArray extends RpcResultAbstract
     }
 
     /**
-     * @return stdClass
+     * @return mixed[]
      */
-    public function getResult(): stdClass
+    public function getResult(): array
     {
-        return $this->arrayToObject($this->result);
+        return $this->result;
     }
 }
