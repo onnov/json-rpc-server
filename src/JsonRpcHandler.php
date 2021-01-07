@@ -67,12 +67,11 @@ class JsonRpcHandler
         try {
             $data = $rpcService->jsonParse($model->getJson());
         } catch (ParseErrorException $e) {
-            $resErr = '{"jsonrpc": "2.0", "error": {"code": -32700, "message": "'
-                . 'Parse error: ' . $e->getMessage() . '"}, "id": null}';
+            $msg = 'Parse error: ' . $e->getMessage();
 
-            $this->log(LogLevel::ERROR, [$resErr]);
+            $this->log(LogLevel::ERROR, ['error' => ['message' => $msg]]);
 
-            return $resErr;
+            return '{"jsonrpc": "2.0", "error": {"code": -32700, "message": "' . $msg . '"}, "id": null}';
         }
 
         $resArr = [];
@@ -211,10 +210,10 @@ class JsonRpcHandler
         try {
             $result = json_encode($res, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
+            $this->log(LogLevel::ERROR, ['error' => ['message' => $e->getMessage()]]);
+
             $result = '{"jsonrpc": "2.0", "error": {"code": -32700, "message": "'
                 . $e->getMessage() . '"}, "id": ' . $strId . '}';
-
-            $this->log(LogLevel::ERROR, [$result]);
         }
 
         return $result;
