@@ -14,6 +14,7 @@ namespace Onnov\JsonRpcServer\Traits;
 
 use Exception;
 use Onnov\JsonRpcServer\Exception\ParseErrorException;
+use RuntimeException;
 use stdClass;
 
 /**
@@ -26,9 +27,13 @@ trait JsonHelperTrait
      * @param mixed[] $array
      * @return stdClass|null
      */
-    public function arrayToObject(array $array): ?stdClass
+    public function assocArrToObject(array $array): ?stdClass
     {
         try {
+            if ($this->isAssoc($array) === false) {
+                throw new RuntimeException('Array is not associative');
+            }
+
             return json_decode(
                 json_encode($array, JSON_THROW_ON_ERROR),
                 false,
@@ -42,5 +47,14 @@ trait JsonHelperTrait
                 $e->getPrevious()
             );
         }
+    }
+
+    /**
+     * @param mixed[] $data
+     * @return bool
+     */
+    public function isAssoc(array &$data): bool
+    {
+        return array_keys($data) !== range(0, count($data) - 1);
     }
 }

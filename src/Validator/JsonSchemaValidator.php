@@ -44,8 +44,8 @@ class JsonSchemaValidator
      */
     public function validate(stdClass $schema, $data, string $dataName = 'data'): void
     {
-        if (is_array($data)) {
-            $data = $this->arrayToObject($data);
+        if (is_array($data) && $this->isAssoc($data)) {
+            $data = $this->assocArrToObject($data);
         }
 
         // Обернем Параметры, для правильной валидации
