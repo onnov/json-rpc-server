@@ -75,11 +75,7 @@ class RpcService
                 $this->setBatch(false);
             }
         } catch (Exception $e) {
-            throw new ParseErrorException(
-                $e->getMessage(),
-                $e->getCode(),
-                $e->getPrevious()
-            );
+            throw new ParseErrorException('', 0, $e->getPrevious());
         }
 
         return $data;
@@ -112,11 +108,7 @@ class RpcService
         try {
             return $this->getMapper()->map($data, new RpcModel());
         } catch (JsonMapper_Exception $e) {
-            throw new ParseErrorException(
-                $e->getMessage(),
-                $e->getCode(),
-                $e->getPrevious()
-            );
+            throw new ParseErrorException('', 0, $e->getPrevious());
         }
     }
 

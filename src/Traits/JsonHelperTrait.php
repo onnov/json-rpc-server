@@ -41,11 +41,7 @@ trait JsonHelperTrait
                 JSON_THROW_ON_ERROR
             );
         } catch (Exception $e) {
-            throw new ParseErrorException(
-                $e->getMessage(),
-                $e->getCode(),
-                $e->getPrevious()
-            );
+            throw new ParseErrorException('', 0, $e->getPrevious());
         }
     }
 

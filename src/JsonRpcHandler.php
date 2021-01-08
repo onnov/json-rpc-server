@@ -6,6 +6,7 @@ namespace Onnov\JsonRpcServer;
 
 use JsonException;
 use JsonMapper;
+use Onnov\JsonRpcServer\Exception\InternalErrorException;
 use Onnov\JsonRpcServer\Model\RunModel;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -38,14 +39,57 @@ class JsonRpcHandler
     /** @var ApiExecService */
     private $apiExecService;
 
+    /** @var mixed[] */
+    private $errors = [
+        'InvalidAuthorizeException' => [
+            'code'       => -32001,
+            'message'    => 'Access denied, you are not authorized', // 'Доступ запрещен, вы не авторизованы'
+            'errorLevel' => LogLevel::INFO,
+        ],
+        'ParseErrorException'       => [
+            'code'       => -32700,
+            'message'    => 'Parse error',
+            'errorLevel' => LogLevel::ERROR,
+        ],
+        'InvalidRequestException'   => [
+            'code'       => -32600,
+            'message'    => 'Invalid Request',
+            'errorLevel' => LogLevel::ERROR,
+        ],
+        'MethodNotFoundException'   => [
+            'code'       => -32601,
+            'message'    => 'Method not found',
+            'errorLevel' => LogLevel::ERROR,
+        ],
+        'InvalidParamsException'    => [
+            'code'       => -32602,
+            'message'    => 'Invalid params',
+            'errorLevel' => LogLevel::ERROR,
+        ],
+        'MethodErrorException'      => [
+            'code'       => 600,
+            'message'    => 'Error',
+            'errorLevel' => LogLevel::NOTICE,
+        ],
+        'Throwable'                 => [
+            'code'       => -32603,
+            'message'    => 'Internal error',
+            'errorLevel' => LogLevel::EMERGENCY,
+        ],
+    ];
+
     /**
      * JsonRpcHandler constructor.
-     *
      * @param LoggerInterface|null $logger
+     * @param mixed[]|null $errors
      */
-    public function __construct(LoggerInterface $logger = null)
+    public function __construct(LoggerInterface $logger = null, array $errors = null)
     {
         $this->logger = $logger;
+
+        if ($errors !== null) {
+            $this->errors = array_merge($this->errors, $errors);
+        }
 
         $validator = new JsonSchemaValidator();
         $rpcSchema = new JsonRpcSchema();
@@ -105,6 +149,8 @@ class JsonRpcHandler
             'jsonrpc' => '2.0',
         ];
 
+        $err = $this->getErrors();
+
         $errorLevel = null;
 
         try {
@@ -119,51 +165,38 @@ class JsonRpcHandler
                 $model,
                 $rpcObj
             );
-        } catch (InvalidAuthorizeException $e) {
+        } catch (InvalidAuthorizeException | MethodNotFoundException $e) {
+            $eName = $this->getExceptionName($e);
+
             $res['error'] = [
-                'code'    => -32001,
-                'message' => $e->getMessage(),
+                'code'    => $this->getCode($e, $eName),
+                'message' => $this->getMessage($e, $eName),
             ];
-            $errorLevel = LogLevel::INFO;
-        } catch (ParseErrorException $e) {
+            $errorLevel = $err[$eName]['errorLevel'] ?? LogLevel::ERROR;
+        } catch (
+            InternalErrorException
+            | InvalidParamsException
+            | InvalidRequestException
+            | MethodErrorException
+            | ParseErrorException $e
+        ) {
+            $eName = $this->getExceptionName($e);
+
             $res['error'] = [
-                'code'    => -32700,
-                'message' => 'Parse error: ' . $e->getMessage(),
+                'code'    => $this->getCode($e, $eName),
+                'message' => $this->getMessage($e, $eName),
+                'data'    => $e->getData()
             ];
-            $errorLevel = LogLevel::ERROR;
-        } catch (InvalidRequestException $e) {
-            $res['error'] = [
-                'code'    => -32600,
-                'message' => 'Invalid Request: ' . $e->getMessage(),
-            ];
-            $errorLevel = LogLevel::ERROR;
-        } catch (MethodNotFoundException $e) {
-            $res['error'] = [
-                'code'    => -32601,
-                'message' => $e->getMessage(), // 'Method not found',
-            ];
-            $errorLevel = LogLevel::ERROR;
-        } catch (InvalidParamsException $e) {
-            $res['error'] = [
-                'code'    => -32602,
-                'message' => $e->getMessage(), // 'Invalid params',
-                'data'    => $e->getData(),
-            ];
-            $errorLevel = LogLevel::ERROR;
-        } catch (MethodErrorException $e) {
-            $res['error'] = [
-                'code'    => $e->getCode(),
-                'message' => $e->getMessage(),
-                'data'    => $e->getData(),
-            ];
-            $errorLevel = LogLevel::NOTICE;
+            $errorLevel = $err[$eName]['errorLevel'] ?? LogLevel::ERROR;
         } catch (Throwable $t) {
+            $eName = 'Throwable';
             $res['error'] = [
-                'code'    => -32603,
-                'message' => 'Internal error: ' . $t->getMessage(),
+                'code'    => $this->getCode($t, $eName),
+                'message' => $this->getMessage($t, $eName),
                 'data'    => [
                     'exception' => get_class($t),
                     'code'      => $t->getCode(),
+                    'message'   => $t->getMessage(),
                     'file'      => $t->getFile(),
                     'line'      => $t->getLine(),
                 ]
@@ -174,6 +207,41 @@ class JsonRpcHandler
         $this->log($errorLevel, $res);
 
         return $this->getJsonResult($rpc, $res);
+    }
+
+    /**
+     * @param Throwable $throw
+     * @param string $exceptionMame
+     * @return int
+     */
+    private function getCode(Throwable $throw, string $exceptionMame): int
+    {
+        $err = $this->getErrors();
+
+        return $throw->getCode() !== 0 ? $throw->getCode() : $err[$exceptionMame]['code'] ?? 0;
+    }
+
+    /**
+     * @param Throwable $throw
+     * @param string $exceptionMame
+     * @return string
+     */
+    private function getMessage(Throwable $throw, string $exceptionMame): string
+    {
+        $err = $this->getErrors();
+
+        return $throw->getMessage() !== '' ? $throw->getMessage() : $err[$exceptionMame]['message'] ?? '';
+    }
+
+    /**
+     * @param Throwable $throw
+     * @return string
+     */
+    private function getExceptionName(Throwable $throw): string
+    {
+        $exception = get_class($throw);
+
+        return substr($exception, (int)strrpos($exception, '\\') + 1);
     }
 
     /**
@@ -262,5 +330,13 @@ class JsonRpcHandler
     public function getApiExeService(): ApiExecService
     {
         return $this->apiExecService;
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public function getErrors(): array
+    {
+        return $this->errors;
     }
 }

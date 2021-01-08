@@ -24,20 +24,29 @@ class MethodErrorException extends RuntimeException
     protected $data;
 
     /**
-     * MethodErrorException constructor.
-     *
-     * @param string         $message
-     * @param int            $code
-     * @param mixed[]          $data
+     * InternalErrorException constructor.
+     * @param string $message
+     * @param int $code
      * @param Throwable|null $previous
+     * @param mixed[]|null $data
      */
     public function __construct(
-        string $message,
-        int $code,
-        array $data = [],
-        ?Throwable $previous = null
+        string $message = "",
+        int $code = 0,
+        Throwable $previous = null,
+        array $data = null
     ) {
-        $this->data = $data;
+        if ($previous !== null && $data === null) {
+            $this->data = [
+                'exception' => get_class($previous),
+                'code'      => $previous->getCode(),
+                'file'      => $previous->getFile(),
+                'line'      => $previous->getLine(),
+            ];
+        } elseif ($data !== null) {
+            $this->data = $data;
+        }
+
         parent::__construct($message, $code, $previous);
     }
 

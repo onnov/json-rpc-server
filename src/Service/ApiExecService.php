@@ -106,11 +106,7 @@ class ApiExecService
             try {
                 $paramsObject = $this->getMapper()->map($rpc->getParams(), $class->customParamsObject());
             } catch (JsonMapper_Exception $e) {
-                throw new ParseErrorException(
-                    $e->getMessage(),
-                    $e->getCode(),
-                    $e->getPrevious()
-                );
+                throw new ParseErrorException('', 0, $e->getPrevious());
             }
         }
 

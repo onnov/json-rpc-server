@@ -14,7 +14,6 @@ namespace Onnov\JsonRpcServer\Tests;
 
 use Onnov\JsonRpcServer\ApiFactoryInterface;
 use Onnov\JsonRpcServer\ApiMethodAbstract;
-use Onnov\JsonRpcServer\Exception\ParseErrorException;
 use Onnov\JsonRpcServer\JsonRpcHandler;
 use Onnov\JsonRpcServer\Model\RpcResultSuccess;
 use Onnov\JsonRpcServer\Model\RunModel;
@@ -62,13 +61,18 @@ class RunTest extends TestCase
     {
         $handler = new JsonRpcHandler();
 
-        $this->expectException(ParseErrorException::class);
+//        $this->expectException(ParseErrorException::class);
 
-        $handler->run(
+        $res = $handler->run(
             new RunModel(
                 $this->getFactory(),
                 'any not json'
             )
+        );
+
+        self::assertStringContainsString(
+            '{"jsonrpc": "2.0", "error": {"code": -32700, "message": "Parse error: "}, "id": null}',
+            $res
         );
     }
 
@@ -101,7 +105,7 @@ class RunTest extends TestCase
         );
 
         self::assertStringContainsString(
-            '{"jsonrpc":"2.0","error":{"code":-32602,"message":"Data validation error",'
+            '{"jsonrpc":"2.0","error":{"code":-32602,"message":"Invalid params",'
             . '"data":{"enum":[["jsonRpc","jsonrpc"],{"expected":["2.0"]}]}},"id":777}',
             $res
         );

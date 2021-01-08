@@ -76,7 +76,9 @@ class JsonSchemaValidator
             }
 
             throw new InvalidParamsException(
-                'Data validation error', // 'Ошибка валидации данных',
+                '', //'Data validation error', // 'Ошибка валидации данных',
+                0,
+                null,
                 $errData
             );
         }
