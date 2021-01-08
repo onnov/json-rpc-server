@@ -18,8 +18,11 @@ use stdClass;
  * Class RpcResultObject
  * @package Onnov\JsonRpcServer\Model
  */
-class RpcResultObject extends RpcResultAbstract
+class RpcResultObject implements RpcResultInterface
 {
+    /** @var stdClass */
+    protected $result;
+
     /**
      * RpcResultArray constructor.
      * @param stdClass $result

@@ -25,9 +25,9 @@ trait JsonHelperTrait
 {
     /**
      * @param mixed[] $array
-     * @return stdClass|null
+     * @return stdClass
      */
-    public function assocArrToObject(array $array): ?stdClass
+    public function assocArrToObject(array $array): stdClass
     {
         try {
             if ($this->isAssoc($array) === false) {
