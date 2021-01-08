@@ -77,7 +77,7 @@ class ApiExecService
 
         /** Создаем экземпляр класса
          *
-         * @var ApiMethodAbstract $class
+         * @var ApiMethodInterface $class
          */
         $class = $factory->get($method);
 
@@ -102,7 +102,7 @@ class ApiExecService
         }
 
         $paramsObject = null;
-        if ($class->customParamsObject() !== null) {
+        if (method_exists($class, 'customParamsObject')) {
             try {
                 $paramsObject = $this->getMapper()->map($rpc->getParams(), $class->customParamsObject());
             } catch (JsonMapper_Exception $e) {
@@ -110,7 +110,10 @@ class ApiExecService
             }
         }
 
-        /** засетим в метод RpcRequest */
+        /**
+         * засетим в метод RpcRequest
+         * @var ApiMethodAbstract $class
+         */
         $class->setRpcRequest(new RpcRequest($rpc, $paramsObject));
 
         /** Выполним метод */
