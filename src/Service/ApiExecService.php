@@ -102,7 +102,7 @@ class ApiExecService
         }
 
         $paramsObject = null;
-        if (method_exists($class, 'customParamsObject')) {
+        if (method_exists($class, 'customParamsObject') && $class->customParamsObject() !== null) {
             try {
                 $paramsObject = $this->getMapper()->map($rpc->getParams(), $class->customParamsObject());
             } catch (JsonMapper_Exception $e) {
