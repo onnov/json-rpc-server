@@ -14,7 +14,6 @@ namespace Onnov\JsonRpcServer\Service;
 
 use JsonMapper;
 use JsonMapper_Exception;
-use Onnov\JsonRpcServer\ApiMethodAbstract;
 use Onnov\JsonRpcServer\ApiMethodInterface;
 use Onnov\JsonRpcServer\Exception\InternalErrorException;
 use Onnov\JsonRpcServer\Exception\MethodNotFoundException;
@@ -82,15 +81,7 @@ class ApiExecService
         $class = $factory->get($method);
 
         /** Проверим соответствие интерфейсу */
-        $interfaces = (array)class_implements($class);
-        if (
-            (bool)$interfaces === false
-            || in_array(ApiMethodInterface::class, $interfaces, true) === false
-        ) {
-            throw new InternalErrorException(
-                'Method "' . $method . '" does not match Interface'
-            );
-        }
+        $this->checkInterface($class, $method);
 
         /** Валидируем парамертры ЗАПРОСА */
         if ($class->requestSchema() !== null) {
@@ -110,11 +101,10 @@ class ApiExecService
             }
         }
 
-        /**
-         * засетим в метод RpcRequest
-         * @var ApiMethodAbstract $class
-         */
-        $class->setRpcRequest(new RpcRequest($rpc, $paramsObject));
+        /** засетим в метод RpcRequest*/
+        if (method_exists($class, 'setRpcRequest')) {
+            $class->setRpcRequest(new RpcRequest($rpc, $paramsObject));
+        }
 
         /** Выполним метод */
         $res = $class->execute()->getResult();
@@ -129,6 +119,24 @@ class ApiExecService
         }
 
         return $res;
+    }
+
+    /**
+     * @param ApiMethodInterface $class
+     * @param string $method
+     */
+    private function checkInterface(ApiMethodInterface $class, string $method): void
+    {
+        // ???
+        $interfaces = (array)class_implements($class);
+        if (
+            (bool)$interfaces === false
+            || in_array(ApiMethodInterface::class, $interfaces, true) === false
+        ) {
+            throw new InternalErrorException(
+                'Method "' . $method . '" does not match Interface'
+            );
+        }
     }
 
     /**
