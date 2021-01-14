@@ -16,8 +16,10 @@ use JsonMapper;
 use JsonMapper_Exception;
 use Onnov\JsonRpcServer\ApiMethodInterface;
 use Onnov\JsonRpcServer\Exception\InternalErrorException;
+use Onnov\JsonRpcServer\Exception\MethodErrorException;
 use Onnov\JsonRpcServer\Exception\MethodNotFoundException;
 use Onnov\JsonRpcServer\Exception\ParseErrorException;
+use Onnov\JsonRpcServer\Exception\RpcNumberException;
 use Onnov\JsonRpcServer\Model\RpcModel;
 use Onnov\JsonRpcServer\Model\RpcRequest;
 use Onnov\JsonRpcServer\Model\RunModel;
@@ -106,8 +108,24 @@ class ApiExecService
             $class->setRpcRequest(new RpcRequest($rpc, $paramsObject));
         }
 
+        // Получим описанные ошибки метода
+        $errors = [];
+        if (method_exists($class, 'getError') && $class->getError() !== null) {
+            $errors = $class->getError();
+        }
+
         /** Выполним метод */
-        $res = $class->execute()->getResult();
+        try {
+            $res = $class->execute()->getResult();
+        } catch (RpcNumberException $e) {
+            $code = 0;
+            $message = 'Unknown error';
+            if (isset($errors[$e->getCode()])) {
+                $code = $e->getCode();
+                $message = $errors[$e->getCode()];
+            }
+            throw new MethodErrorException($message, $code);
+        }
 
         if ($model->isResponseCheck() && $class->responseSchema() !== null) {
             /** Валидируем парамертры ОТВЕТА */
