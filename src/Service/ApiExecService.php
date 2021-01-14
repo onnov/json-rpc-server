@@ -108,18 +108,13 @@ class ApiExecService
             $class->setRpcRequest(new RpcRequest($rpc, $paramsObject));
         }
 
-        // Получим описанные ошибки метода
-        $errors = [];
-        if (method_exists($class, 'getError') && $class->getError() !== null) {
-            $errors = $class->getError();
-        }
-
         /** Выполним метод */
         try {
             $res = $class->execute()->getResult();
         } catch (RpcNumberException $e) {
             $code = 0;
             $message = 'Unknown error';
+            $errors = $model->getErrors();
             if (isset($errors[$e->getCode()])) {
                 $code = $e->getCode();
                 $message = $errors[$e->getCode()];

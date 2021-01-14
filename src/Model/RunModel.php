@@ -32,6 +32,13 @@ class RunModel
     /** @var string[] */
     private $methodsWithoutAuth;
 
+    /**
+     * custom errors for methods
+     *
+     * @var array<int, string>
+     */
+    private $errors;
+
     /** @var bool */
     private $responseCheck;
 
@@ -41,6 +48,7 @@ class RunModel
      * @param string $json
      * @param bool $resultAuth
      * @param string[] $methodsWithoutAuth
+     * @param array<int, string> $errors
      * @param bool $responseCheck
      */
     public function __construct(
@@ -48,6 +56,7 @@ class RunModel
         string $json,
         bool $resultAuth = true,
         array $methodsWithoutAuth = [],
+        array $errors = [],
         bool $responseCheck = false
     ) {
         $this
@@ -55,6 +64,7 @@ class RunModel
             ->setJson($json)
             ->setResultAuth($resultAuth)
             ->setMethodsWithoutAuth($methodsWithoutAuth)
+            ->setErrors($errors)
             ->setResponseCheck($responseCheck);
     }
 
@@ -130,6 +140,25 @@ class RunModel
     public function setMethodsWithoutAuth(array $methodsWithoutAuth): self
     {
         $this->methodsWithoutAuth = $methodsWithoutAuth;
+
+        return $this;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
+    /**
+     * @param array<int, string> $errors
+     * @return RunModel
+     */
+    public function setErrors(array $errors): self
+    {
+        $this->errors = $errors;
 
         return $this;
     }

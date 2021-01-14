@@ -45,14 +45,6 @@ abstract class ApiMethodAbstract implements ApiMethodInterface
     abstract public function responseSchema(): ?stdClass;
 
     /**
-     * custom errors for method
-     * or null if not required
-     *
-     * @return array<int, string>|null
-     */
-    abstract public function getError(): ?array;
-
-    /**
      * @return RpcRequest
      */
     public function getRpcRequest(): RpcRequest
