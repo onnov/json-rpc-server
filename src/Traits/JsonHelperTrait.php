@@ -25,15 +25,11 @@ trait JsonHelperTrait
 {
     /**
      * @param mixed[] $array
-     * @return stdClass
+     * @return mixed
      */
-    public function assocArrToObject(array $array): stdClass
+    public function arrayToObject(array $array)
     {
         try {
-            if ($this->isAssoc($array) === false) {
-                throw new RuntimeException('Array is not associative');
-            }
-
             return json_decode(
                 json_encode($array, JSON_THROW_ON_ERROR),
                 false,
@@ -43,6 +39,19 @@ trait JsonHelperTrait
         } catch (Exception $e) {
             throw new ParseErrorException('', 0, $e->getPrevious());
         }
+    }
+
+    /**
+     * @param mixed[] $array
+     * @return stdClass
+     */
+    public function assocArrToObject(array $array): stdClass
+    {
+        if ($this->isAssoc($array) === false) {
+            throw new RuntimeException('Array is not associative');
+        }
+
+        return $this->arrayToObject($array);
     }
 
     /**
