@@ -46,11 +46,20 @@ trait JsonHelperTrait
     }
 
     /**
-     * @param mixed[] $data
+     * method from Kohana
+     * Tests if an array is associative or not.
+     *
+     * @param mixed[] $array
      * @return bool
      */
-    public function isAssoc(array &$data): bool
+    public function isAssoc(array &$array): bool
     {
-        return array_keys($data) !== range(0, count($data) - 1);
+        // Keys of the array
+        $keys = array_keys($array);
+
+        // If the array keys of the keys match the keys, then the array must
+        // not be associative (e.g. the keys array looked like {0:0, 1:1...}).
+
+        return array_keys($keys) !== $keys;
     }
 }
