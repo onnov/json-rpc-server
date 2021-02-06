@@ -14,15 +14,14 @@ namespace Onnov\JsonRpcServer\Service;
 
 use JsonMapper;
 use JsonMapper_Exception;
-use Onnov\JsonRpcServer\ApiMethodInterface;
-use Onnov\JsonRpcServer\Exception\InternalErrorException;
+use Onnov\JsonRpcServer\Exception\ParseErrorException;
+use Onnov\JsonRpcServer\RpcProcedureInterface;
 use Onnov\JsonRpcServer\Exception\MethodErrorException;
 use Onnov\JsonRpcServer\Exception\MethodNotFoundException;
-use Onnov\JsonRpcServer\Exception\ParseErrorException;
 use Onnov\JsonRpcServer\Exception\RpcNumberException;
 use Onnov\JsonRpcServer\Model\RpcModel;
 use Onnov\JsonRpcServer\Model\RpcRequest;
-use Onnov\JsonRpcServer\Model\RunModel;
+use Onnov\JsonRpcServer\Model\RpcRun;
 use Onnov\JsonRpcServer\Traits\JsonHelperTrait;
 use Onnov\JsonRpcServer\Validator\JsonRpcSchema;
 use Onnov\JsonRpcServer\Validator\JsonSchemaValidator;
@@ -58,46 +57,51 @@ class ApiExecService
     }
 
     /**
-     * @param RunModel $model
+     * @param RpcRun $model
      * @param RpcModel $rpc
      *
      * @return mixed
      */
     public function exe(
-        RunModel $model,
+        RpcRun $model,
         RpcModel $rpc
     ) {
-        $factory = $model->getApiFactory();
+        $factory = $model->getRpcFactory();
         $method = $rpc->getMethod();
         /** Проверим существование метода */
         if ($factory->has($method) === false) {
             throw new MethodNotFoundException(
-                'Method "' . $method . '" not found'
+                'Method "' . $method . '" not found.'
             );
         }
 
         /** Создаем экземпляр класса
          *
-         * @var ApiMethodInterface $class
+         * @var RpcProcedureInterface $class
          */
         $class = $factory->get($method);
 
-        /** Проверим соответствие интерфейсу */
-        $this->checkInterface($class, $method);
+//        /** Проверим соответствие интерфейсу */
+//        $this->checkInterface($class, $method);
 
         /** Валидируем парамертры ЗАПРОСА */
-        if ($class->requestSchema() !== null) {
+        if ($class->getDefinition()->getParams() !== null) {
             $this->getValidator()->validate(
-                $class->requestSchema(),
+                $class->getDefinition()->getParams(),
                 $rpc->getParams(),
                 'requestParams'
             );
         }
 
         $paramsObject = null;
-        if (method_exists($class, 'customParamsObject') && $class->customParamsObject() !== null) {
+        if ($class->getDefinition()->getParamsObject() !== null) {
             try {
-                $paramsObject = $this->getMapper()->map($rpc->getParams(), $class->customParamsObject());
+                $paramsObject = $this
+                    ->getMapper()
+                    ->map(
+                        $rpc->getParams(),
+                        $class->getDefinition()->getParamsObject()
+                    );
             } catch (JsonMapper_Exception $e) {
                 throw new ParseErrorException('', 0, $e->getPrevious());
             }
@@ -114,18 +118,21 @@ class ApiExecService
         } catch (RpcNumberException $e) {
             $code = 0;
             $message = 'Unknown error';
-            $errors = $model->getErrors();
-            if (isset($errors[$e->getCode()])) {
-                $code = $e->getCode();
-                $message = $errors[$e->getCode()];
+            $data = null;
+            $errors = $class->getDefinition()->getErrors();
+            if ($errors !== null && isset($errors[$e->getCode()])) {
+                $err = $errors[$e->getCode()];
+                $code = $err->getCode();
+                $message = $err->getMessage();
+                $data = $err->getData();
             }
-            throw new MethodErrorException($message, $code);
+            throw new MethodErrorException($message, $code, $e, $data);
         }
 
-        if ($model->isResponseCheck() && $class->responseSchema() !== null) {
+        if ($model->isResponseCheck() && $class->getDefinition()->getResult() !== null) {
             /** Валидируем парамертры ОТВЕТА */
             $this->getValidator()->validate(
-                $class->responseSchema(),
+                $class->getDefinition()->getResult(),
                 $res,
                 'responseParams'
             );
@@ -134,23 +141,23 @@ class ApiExecService
         return $res;
     }
 
-    /**
-     * @param ApiMethodInterface $class
-     * @param string $method
-     */
-    private function checkInterface(ApiMethodInterface $class, string $method): void
-    {
-        // ???
-        $interfaces = (array)class_implements($class);
-        if (
-            (bool)$interfaces === false
-            || in_array(ApiMethodInterface::class, $interfaces, true) === false
-        ) {
-            throw new InternalErrorException(
-                'Method "' . $method . '" does not match Interface'
-            );
-        }
-    }
+//    /**
+//     * @param RpcProcedureInterface $class
+//     * @param string $method
+//     */
+//    private function checkInterface(RpcProcedureInterface $class, string $method): void
+//    {
+//        // ???
+//        $interfaces = (array)class_implements($class);
+//        if (
+//            (bool)$interfaces === false
+//            || in_array(RpcProcedureInterface::class, $interfaces, true) === false
+//        ) {
+//            throw new InternalErrorException(
+//                'Method "' . $method . '" does not match Interface.'
+//            );
+//        }
+//    }
 
     /**
      * @return JsonSchemaValidator

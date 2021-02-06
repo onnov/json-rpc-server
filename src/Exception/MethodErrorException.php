@@ -11,6 +11,7 @@
 namespace Onnov\JsonRpcServer\Exception;
 
 use RuntimeException;
+use stdClass;
 use Throwable;
 
 /**
@@ -20,7 +21,7 @@ use Throwable;
  */
 class MethodErrorException extends RuntimeException
 {
-    /** @var mixed[]|null */
+    /** @var stdClass|null */
     protected $data;
 
     /**
@@ -28,16 +29,16 @@ class MethodErrorException extends RuntimeException
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous
-     * @param mixed[]|null $data
+     * @param stdClass|null $data
      */
     public function __construct(
         string $message = "",
         int $code = 0,
         Throwable $previous = null,
-        array $data = null
+        stdClass $data = null
     ) {
         if ($previous !== null && $data === null) {
-            $this->data = [
+            $this->data = (object)[
                 'exception' => get_class($previous),
                 'code'      => $previous->getCode(),
                 'file'      => $previous->getFile(),
@@ -51,9 +52,9 @@ class MethodErrorException extends RuntimeException
     }
 
     /**
-     * @return mixed[]|null
+     * @return stdClass|null
      */
-    public function getData(): ?array
+    public function getData(): ?stdClass
     {
         return $this->data;
     }

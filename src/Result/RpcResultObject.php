@@ -10,13 +10,13 @@
 
 declare(strict_types=1);
 
-namespace Onnov\JsonRpcServer\Model;
+namespace Onnov\JsonRpcServer\Result;
 
 use stdClass;
 
 /**
  * Class RpcResultObject
- * @package Onnov\JsonRpcServer\Model
+ * @package Onnov\JsonRpcServer\Result
  */
 class RpcResultObject implements RpcResultInterface
 {

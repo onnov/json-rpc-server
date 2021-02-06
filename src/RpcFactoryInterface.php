@@ -8,11 +8,10 @@ use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
 /**
- * Interface ApiFactoryInterface
- *
+ * Interface RpcFactoryInterface
  * @package Onnov\JsonRpcServer
  */
-interface ApiFactoryInterface extends ServiceSubscriberInterface, ContainerInterface
+interface RpcFactoryInterface extends ServiceSubscriberInterface, ContainerInterface
 {
     /**
      * @return mixed[]

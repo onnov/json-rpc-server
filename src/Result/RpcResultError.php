@@ -10,17 +10,17 @@
 
 declare(strict_types=1);
 
-namespace Onnov\JsonRpcServer\Model;
+namespace Onnov\JsonRpcServer\Result;
 
 /**
- * Class RpcResultAbstractNull
- * @package Onnov\JsonRpcServer\Model
+ * Class RpcResultError
+ * @package Onnov\JsonRpcServer\Result
  */
-class RpcResultSuccess extends RpcResultAbstract
+class RpcResultError extends RpcResultAbstract
 {
     public function __construct()
     {
-        $this->result = 'success';
+        $this->result = 'error';
     }
 
     /**
