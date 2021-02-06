@@ -70,10 +70,13 @@ class RpcAuthDefinition
 
     /**
      * @param RpcErrorDefinition $authError
+     * @return RpcAuthDefinition
      */
-    public function setAuthError(RpcErrorDefinition $authError): void
+    public function setAuthError(RpcErrorDefinition $authError): self
     {
         $this->authError = $authError;
+
+        return $this;
     }
 
     /**
@@ -86,10 +89,13 @@ class RpcAuthDefinition
 
     /**
      * @param string[] $procWithoutAuth
+     * @return RpcAuthDefinition
      */
-    public function setProcWithoutAuth(array $procWithoutAuth): void
+    public function setProcWithoutAuth(array $procWithoutAuth): self
     {
         $this->procWithoutAuth = $procWithoutAuth;
+
+        return $this;
     }
 
     /**
@@ -102,9 +108,12 @@ class RpcAuthDefinition
 
     /**
      * @param bool $resultAuth
+     * @return RpcAuthDefinition
      */
-    public function setResultAuth(bool $resultAuth): void
+    public function setResultAuth(bool $resultAuth): self
     {
         $this->resultAuth = $resultAuth;
+
+        return $this;
     }
 }

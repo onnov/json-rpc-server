@@ -79,10 +79,13 @@ class RpcProcedureDefinition
 
     /**
      * @param string $summary
+     * @return RpcProcedureDefinition
      */
-    public function setSummary(string $summary): void
+    public function setSummary(string $summary): self
     {
         $this->summary = $summary;
+
+        return $this;
     }
 
     /**
@@ -95,10 +98,13 @@ class RpcProcedureDefinition
 
     /**
      * @param string|string[]|null $description
+     * @return RpcProcedureDefinition
      */
-    public function setDescription($description): void
+    public function setDescription($description): self
     {
         $this->description = $description;
+
+        return $this;
     }
 
     /**
@@ -111,10 +117,13 @@ class RpcProcedureDefinition
 
     /**
      * @param string[]|null $tags
+     * @return RpcProcedureDefinition
      */
-    public function setTags(?array $tags): void
+    public function setTags(?array $tags): self
     {
         $this->tags = $tags;
+
+        return $this;
     }
 
     /**
@@ -127,10 +136,13 @@ class RpcProcedureDefinition
 
     /**
      * @param stdClass|null $params
+     * @return RpcProcedureDefinition
      */
-    public function setParams(?stdClass $params): void
+    public function setParams(?stdClass $params): self
     {
         $this->params = $params;
+
+        return $this;
     }
 
     /**
@@ -143,10 +155,13 @@ class RpcProcedureDefinition
 
     /**
      * @param object|null $paramsObject
+     * @return RpcProcedureDefinition
      */
-    public function setParamsObject(?object $paramsObject): void
+    public function setParamsObject(?object $paramsObject): self
     {
         $this->paramsObject = $paramsObject;
+
+        return $this;
     }
 
     /**
@@ -159,10 +174,13 @@ class RpcProcedureDefinition
 
     /**
      * @param stdClass|null $result
+     * @return RpcProcedureDefinition
      */
-    public function setResult(?stdClass $result): void
+    public function setResult(?stdClass $result): self
     {
         $this->result = $result;
+
+        return $this;
     }
 
     /**
@@ -175,9 +193,12 @@ class RpcProcedureDefinition
 
     /**
      * @param RpcErrorDefinition[]|null $errors
+     * @return RpcProcedureDefinition
      */
-    public function setErrors(?array $errors): void
+    public function setErrors(?array $errors): self
     {
         $this->errors = $errors;
+
+        return $this;
     }
 }

@@ -58,10 +58,13 @@ class RpcGeneralDefinition
 
     /**
      * @param string $jrgen
+     * @return RpcGeneralDefinition
      */
-    public function setJrgen(string $jrgen): void
+    public function setJrgen(string $jrgen): self
     {
         $this->jrgen = $jrgen;
+
+        return $this;
     }
 
     /**
@@ -74,10 +77,13 @@ class RpcGeneralDefinition
 
     /**
      * @param string $jsonrpc
+     * @return RpcGeneralDefinition
      */
-    public function setJsonrpc(string $jsonrpc): void
+    public function setJsonrpc(string $jsonrpc): self
     {
         $this->jsonrpc = $jsonrpc;
+
+        return $this;
     }
 
     /**
@@ -90,10 +96,13 @@ class RpcGeneralDefinition
 
     /**
      * @param RpcInfoDefinition $info
+     * @return RpcGeneralDefinition
      */
-    public function setInfo(RpcInfoDefinition $info): void
+    public function setInfo(RpcInfoDefinition $info): self
     {
         $this->info = $info;
+
+        return $this;
     }
 
     /**
@@ -106,9 +115,12 @@ class RpcGeneralDefinition
 
     /**
      * @param stdClass|null $definitions
+     * @return RpcGeneralDefinition
      */
-    public function setDefinitions(?stdClass $definitions): void
+    public function setDefinitions(?stdClass $definitions): self
     {
         $this->definitions = $definitions;
+
+        return $this;
     }
 }

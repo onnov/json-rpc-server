@@ -83,10 +83,13 @@ class RpcErrorDefinition
 
     /**
      * @param string|null $description
+     * @return RpcErrorDefinition
      */
-    public function setDescription(?string $description): void
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
     }
 
     /**
@@ -99,10 +102,13 @@ class RpcErrorDefinition
 
     /**
      * @param int $code
+     * @return RpcErrorDefinition
      */
-    public function setCode(int $code): void
+    public function setCode(int $code): self
     {
         $this->code = $code;
+
+        return $this;
     }
 
     /**
@@ -115,10 +121,13 @@ class RpcErrorDefinition
 
     /**
      * @param string $message
+     * @return RpcErrorDefinition
      */
-    public function setMessage(string $message): void
+    public function setMessage(string $message): self
     {
         $this->message = $message;
+
+        return $this;
     }
 
     /**
@@ -131,10 +140,13 @@ class RpcErrorDefinition
 
     /**
      * @param stdClass|null $data
+     * @return RpcErrorDefinition
      */
-    public function setData(?stdClass $data): void
+    public function setData(?stdClass $data): self
     {
         $this->data = $data;
+
+        return $this;
     }
 
     /**
@@ -147,9 +159,12 @@ class RpcErrorDefinition
 
     /**
      * @param string|null $logLevel
+     * @return RpcErrorDefinition
      */
-    public function setLogLevel(?string $logLevel): void
+    public function setLogLevel(?string $logLevel): self
     {
         $this->logLevel = $logLevel;
+
+        return $this;
     }
 }

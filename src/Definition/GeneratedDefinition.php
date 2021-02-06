@@ -36,9 +36,12 @@ class GeneratedDefinition extends RpcGeneralDefinition
 
     /**
      * @param RpcProcedureDefinition[] $methods
+     * @return GeneratedDefinition
      */
-    public function setMethods(array $methods): void
+    public function setMethods(array $methods): self
     {
         $this->methods = $methods;
+
+        return $this;
     }
 }

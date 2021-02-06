@@ -49,10 +49,13 @@ class RpcInfoDefinition
 
     /**
      * @param string $title
+     * @return RpcInfoDefinition
      */
-    public function setTitle(string $title): void
+    public function setTitle(string $title): self
     {
         $this->title = $title;
+
+        return $this;
     }
 
     /**
@@ -65,10 +68,13 @@ class RpcInfoDefinition
 
     /**
      * @param string|string[]|null $description
+     * @return RpcInfoDefinition
      */
-    public function setDescription($description): void
+    public function setDescription($description): self
     {
         $this->description = $description;
+
+        return $this;
     }
 
     /**
@@ -81,9 +87,12 @@ class RpcInfoDefinition
 
     /**
      * @param string $version
+     * @return RpcInfoDefinition
      */
-    public function setVersion(string $version): void
+    public function setVersion(string $version): self
     {
         $this->version = $version;
+
+        return $this;
     }
 }
