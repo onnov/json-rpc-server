@@ -125,7 +125,7 @@ class RpcHandler
         } catch (InvalidAuthorizeException | MethodNotFoundException $e) {
             $error = $this
                 ->getRpcError()
-                ->getErrorByName($this->getExceptionName($e));
+                ->getErrorByName($this->getExceptionName($e), $e);
         } catch (
             InternalErrorException
             | InvalidParamsException
@@ -135,7 +135,8 @@ class RpcHandler
         ) {
             $error = $this
                 ->getRpcError()
-                ->getErrorByName($this->getExceptionName($e));
+                ->getErrorByName($this->getExceptionName($e), $e);
+
             if ($e->getData() !== null) {
                 $error->setData((object)$e->getData());
             }

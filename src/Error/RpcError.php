@@ -14,6 +14,7 @@ namespace Onnov\JsonRpcServer\Error;
 
 use Onnov\JsonRpcServer\Definition\RpcErrorDefinition;
 use Psr\Log\LogLevel;
+use Throwable;
 
 /**
  * Class ErrorService
@@ -34,35 +35,42 @@ class RpcError
     {
         $this->errors = [
             'InvalidAuthorizeException' => $authError,
-            'ParseErrorException'     => new RpcErrorDefinition(
+            'MethodErrorException'      => new RpcErrorDefinition(
+                [
+                    'code'       => 600,
+                    'message'    => 'Error',
+                    'errorLevel' => LogLevel::NOTICE,
+                ]
+            ),
+            'ParseErrorException'       => new RpcErrorDefinition(
                 [
                     'code'       => -32700,
                     'message'    => 'Parse error',
                     'errorLevel' => LogLevel::ERROR,
                 ]
             ),
-            'InvalidRequestException' => new RpcErrorDefinition(
+            'InvalidRequestException'   => new RpcErrorDefinition(
                 [
                     'code'       => -32600,
                     'message'    => 'Invalid Request',
                     'errorLevel' => LogLevel::ERROR,
                 ]
             ),
-            'MethodNotFoundException' => new RpcErrorDefinition(
+            'MethodNotFoundException'   => new RpcErrorDefinition(
                 [
                     'code'       => -32601,
                     'message'    => 'Method not found',
                     'errorLevel' => LogLevel::ERROR,
                 ]
             ),
-            'InvalidParamsException'  => new RpcErrorDefinition(
+            'InvalidParamsException'    => new RpcErrorDefinition(
                 [
                     'code'       => -32602,
                     'message'    => 'Invalid params',
                     'errorLevel' => LogLevel::ERROR,
                 ]
             ),
-            'Throwable'               => new RpcErrorDefinition(
+            'Throwable'                 => new RpcErrorDefinition(
                 [
                     'code'       => -32603,
                     'message'    => 'Internal error',
@@ -74,11 +82,24 @@ class RpcError
 
     /**
      * @param string $errorName
+     * @param Throwable|null $throw
      * @return RpcErrorDefinition
      */
-    public function getErrorByName(string $errorName): RpcErrorDefinition
+    public function getErrorByName(string $errorName, Throwable $throw = null): RpcErrorDefinition
     {
-        return $this->errors[$errorName] ?? $this->errors['Throwable'];
+        $error = $this->errors['Throwable'];
+        if ($throw !== null && isset($this->errors[$errorName])) {
+            $error = $this->errors[$errorName];
+
+            if ($throw->getCode() !== 0) {
+                $error->setCode($throw->getCode());
+            }
+            if ($throw->getMessage() !== '') {
+                $error->setMessage($throw->getMessage());
+            }
+        }
+
+        return $error;
     }
 
     /**

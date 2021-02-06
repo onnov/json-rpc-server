@@ -48,7 +48,7 @@ class RpcRun
             $this->json = $data['json'];
         }
         if (isset($data['auth'])) {
-            $this->json = $data['auth'];
+            $this->auth = $data['auth'];
         }
         $this->responseCheck = $data['responseCheck'] ?? false;
     }
