@@ -55,6 +55,9 @@ class RpcDefinitionGenerator
                     $error = $error->toArray();
                 }
             }
+            if (is_object($method['paramsObject'])) {
+                $method['paramsObject'] = get_class($method['paramsObject']);
+            }
         }
 
         return $def;
