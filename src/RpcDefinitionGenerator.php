@@ -31,7 +31,10 @@ class RpcDefinitionGenerator
      */
     public function convertToJson(GeneratedDefinition $definition): string
     {
-        return json_encode($this->convertToArray($definition), JSON_THROW_ON_ERROR);
+        return json_encode(
+            $this->convertToArray($definition),
+            JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR
+        );
     }
 
     /**
