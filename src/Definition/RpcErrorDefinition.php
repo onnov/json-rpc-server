@@ -20,6 +20,8 @@ use stdClass;
  */
 class RpcErrorDefinition
 {
+    use CastableToArray;
+
     /**
      * Description of what went wrong.
      *

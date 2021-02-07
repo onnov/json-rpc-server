@@ -20,6 +20,8 @@ use stdClass;
  */
 class RpcGeneralDefinition
 {
+    use CastableToArray;
+
     /**
      * Version of the jrgen spec.
      *

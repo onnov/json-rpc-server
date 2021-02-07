@@ -18,6 +18,8 @@ namespace Onnov\JsonRpcServer\Definition;
  */
 class RpcInfoDefinition
 {
+    use CastableToArray;
+
     /**
      * Name of the api.
      *

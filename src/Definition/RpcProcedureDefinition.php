@@ -20,6 +20,8 @@ use stdClass;
  */
 class RpcProcedureDefinition
 {
+    use CastableToArray;
+
     /**
      * Short summary of what the procedure does.
      *

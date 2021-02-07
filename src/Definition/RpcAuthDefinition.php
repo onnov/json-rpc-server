@@ -20,6 +20,8 @@ use Psr\Log\LogLevel;
  */
 class RpcAuthDefinition
 {
+    use CastableToArray;
+
     /**
      * Authorisation Error.
      *
