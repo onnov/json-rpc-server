@@ -15,6 +15,7 @@ namespace Onnov\JsonRpcServer;
 use JsonException;
 use Onnov\JsonRpcServer\Definition\GeneratedDefinition;
 use Onnov\JsonRpcServer\Definition\RpcAuthDefinition;
+use Onnov\JsonRpcServer\Definition\RpcErrorDefinition;
 use Onnov\JsonRpcServer\Definition\RpcGeneralDefinition;
 
 /**
@@ -30,26 +31,30 @@ class RpcDefinitionGenerator
      */
     public function convertToJson(GeneratedDefinition $definition): string
     {
-        return  json_encode($this->objToArray($definition->toArray()), JSON_THROW_ON_ERROR);
+        return json_encode($this->convertToArray($definition), JSON_THROW_ON_ERROR);
     }
 
     /**
-     * @param mixed[] $array
+     * @param GeneratedDefinition $definition
      * @return mixed[]
      */
-    private function objToArray(array $array): array
+    public function convertToArray(GeneratedDefinition $definition): array
     {
-        foreach ($array as $key => $val) {
-            if (is_object($val) && method_exists($val, 'toArray')) {
-                $array[$key] = $val->toArray();
-            }
+        $def = $definition->toArray();
+        $def['info'] = $definition->getInfo()->toArray();
+        $def['methods'] = $definition->getMethods();
 
-            if (is_array($array[$key])) {
-                $array[$key] = $this->objToArray($array[$key]);
+        foreach ($def['methods'] as &$method) {
+            $method = $method->toArray();
+            if (is_array($method['errors'])) {
+                /** @var RpcErrorDefinition $error */
+                foreach ($method['errors'] as &$error) {
+                    $error = $error->toArray();
+                }
             }
         }
 
-        return $array;
+        return $def;
     }
 
     /**
@@ -76,23 +81,24 @@ class RpcDefinitionGenerator
         foreach ($procedures as $procedure) {
             /** @var RpcProcedureInterface $procObj */
             $procObj = $factory->get($procedure);
+            $procDef = $procObj->getDefinition();
 
             /** добавим ошибку авторизации */
             if ($auth !== null && !in_array($procedure, $auth->getProcWithoutAuth(), true)) {
-                $procObj
-                    ->getDefinition()
+                $procDef
                     ->setErrors(
                         [
                             $auth
                                 ->getAuthError()
                                 ->getCode() => $auth
                                 ->getAuthError()
-                        ] + $procObj->getDefinition()->getErrors() ?? []
+                        ] + ($procDef->getErrors() ?? [])
                     );
             }
 
-            $methods[$procedure] = $procObj->getDefinition();
+            $methods[$procedure] = $procDef;
         }
+
         $def->setMethods($methods);
 
         return $def;
