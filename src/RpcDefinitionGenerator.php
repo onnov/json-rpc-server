@@ -63,7 +63,8 @@ class RpcDefinitionGenerator
         RpcFactoryInterface $factory,
         RpcAuthDefinition $auth = null
     ): GeneratedDefinition {
-        $def = (new GeneratedDefinition())
+        $def = new GeneratedDefinition();
+        $def
             ->setJrgen($definition->getJrgen())
             ->setJsonrpc($definition->getJsonrpc())
             ->setInfo($definition->getInfo())
