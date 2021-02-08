@@ -23,6 +23,13 @@ class RpcGeneralDefinition
     use CastableToArray;
 
     /**
+     * https://github.com/mzernetsch/jrgen
+     *
+     * @var string
+     */
+    private $schema = 'https://rawgit.com/mzernetsch/jrgen/master/jrgen-spec.schema.json';
+
+    /**
      * Version of the jrgen spec.
      *
      * @var string
@@ -49,6 +56,22 @@ class RpcGeneralDefinition
      * @var stdClass|null
      */
     private $definitions = null;
+
+    /**
+     * @return string
+     */
+    public function getSchema(): string
+    {
+        return $this->schema;
+    }
+
+    /**
+     * @param string $schema
+     */
+    public function setSchema(string $schema): void
+    {
+        $this->schema = $schema;
+    }
 
     /**
      * @return string

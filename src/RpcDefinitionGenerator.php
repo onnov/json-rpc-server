@@ -43,7 +43,8 @@ class RpcDefinitionGenerator
      */
     public function convertToArray(GeneratedDefinition $definition): array
     {
-        $def = $definition->toArray();
+        $def = ['$schema' => $definition->getSchema()] + $definition->toArray();
+        unset($def['schema']);
         $def['info'] = $definition->getInfo()->toArray();
         $def['methods'] = $definition->getMethods();
 
@@ -51,7 +52,7 @@ class RpcDefinitionGenerator
             $method = $method->toArray();
             if (is_array($method['errors'])) {
                 /** @var RpcErrorDefinition $error */
-                foreach ($method['errors'] as &$error) {
+                foreach (array_values($method['errors']) as &$error) {
                     $error = $error->toArray();
                 }
             }
