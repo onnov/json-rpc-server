@@ -51,8 +51,9 @@ class RpcDefinitionGenerator
         foreach ($def['methods'] as &$method) {
             $method = $method->toArray();
             if (is_array($method['errors'])) {
+                $method['errors'] = array_values($method['errors']);
                 /** @var RpcErrorDefinition $error */
-                foreach (array_values($method['errors']) as &$error) {
+                foreach ($method['errors'] as &$error) {
                     $error = $error->toArray();
                 }
             }
