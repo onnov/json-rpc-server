@@ -53,8 +53,8 @@ class RpcAuthDefinition
             [
                 'code'     => -32001,
                 'message'  => 'Access denied, you are not authorized',
-                'description' => 'The error occurs if the procedure requires authorization,
-                 but the user is not authorized.',
+                'description' => 'The error occurs if the procedure requires authorization, '
+                 . 'but the user is not authorized.',
                 'logLevel' => LogLevel::INFO,
             ]
         );
