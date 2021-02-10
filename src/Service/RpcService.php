@@ -52,7 +52,7 @@ class RpcService
     /**
      * @param string $json
      *
-     * @return stdClass[]
+     * @return mixed[]
      * @throws ParseErrorException
      */
     public function jsonParse(string $json): array
@@ -75,7 +75,7 @@ class RpcService
                 $this->setBatch(false);
             }
         } catch (Exception $e) {
-            throw new ParseErrorException('', 0, $e->getPrevious());
+            throw new ParseErrorException('', 0, $e);
         }
 
         return $data;
@@ -108,7 +108,7 @@ class RpcService
         try {
             return $this->getMapper()->map($data, new RpcModel());
         } catch (JsonMapper_Exception $e) {
-            throw new ParseErrorException('', 0, $e->getPrevious());
+            throw new ParseErrorException('', 0, $e);
         }
     }
 

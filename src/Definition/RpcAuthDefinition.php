@@ -59,7 +59,7 @@ class RpcAuthDefinition
             ]
         );
         $this->procWithoutAuth = $data['procWithoutAuth'] ?? [];
-        $this->resultAuth = $data['resultAuth'] ?? false;
+        $this->resultAuth = $data['resultAuth'] ?? true;
     }
 
     /**

@@ -76,11 +76,17 @@ class RpcHandler
 
             $resArr = [];
             foreach ($data as $rpc) {
-                // TODO впилить паралельное выполнение, возможно amphp/amp
-                $resArr[] = $this->oneRun(
-                    $rpcRun,
-                    $rpc
-                );
+                switch (true) {
+                    case ($rpc instanceof stdClass):
+                        // TODO впилить паралельное выполнение, возможно amphp/amp
+                        $resArr[] = $this->oneRun(
+                            $rpcRun,
+                            $rpc
+                        );
+                        break;
+                    default:
+                        $resArr[] = $this->getJsonStrError();
+                }
             }
 
             $res = implode(',', $resArr);
@@ -89,7 +95,7 @@ class RpcHandler
                 $res = '[' . $res . ']';
             }
         } catch (ParseErrorException $e) {
-            $res = $this->getJsonStrError($e->getMessage(), 'error');
+            $res = $this->getJsonStrError($e->getPrevious());
         }
 
         return $res;
@@ -206,29 +212,40 @@ class RpcHandler
         try {
             $result = json_encode($res, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
-            $result = $this->getJsonStrError($e->getMessage(), $rpc->id ?? 'error');
+            $result = $this->getJsonStrError($e, $rpc->id ?? 'error');
         }
 
         return $result;
     }
 
     /**
-     * @param string $msg
+     * @param Throwable|null $err
      * @param mixed $id
      * @return string
      */
-    private function getJsonStrError(string $msg, $id): string
+    private function getJsonStrError(Throwable $err = null, $id = 'error'): string
     {
-        $err = [
+        if (gettype($id) === 'string') {
+            $id = '"' . $id . '"';
+        }
+
+        $data = '';
+        $msg = 'Parse error';
+        if ($err !== null) {
+            $data = ', "data" => {"code": ' . $err->getCode() . ', "message": "' . $err->getMessage() . '"}';
+            $msg = 'Parse error (' . $err->getMessage() . ')';
+        }
+
+        $res = [
             '{"jsonrpc": "2.0",',
             '"error":',
-            '{"code": -32700, "message": "Parse error: ' . $msg . '"},',
+            '{"code": -32700, "message": "Parse error"' . $data . '},',
             '"id": ' . $id . '}',
         ];
 
         $this->log(LogLevel::ERROR, ['error' => ['message' => $msg]]);
 
-        return implode(' ', $err);
+        return implode(' ', $res);
     }
 
     /**
