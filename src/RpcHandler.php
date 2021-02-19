@@ -243,7 +243,7 @@ class RpcHandler
             '"id": ' . $id . '}',
         ];
 
-        $this->log(LogLevel::ERROR, ['error' => ['message' => $msg]]);
+        $this->log(LogLevel::ERROR, ['error' => (object)['message' => $msg]]);
 
         return implode(' ', $res);
     }
@@ -257,7 +257,7 @@ class RpcHandler
         $logger = $this->getLogger();
         if ($errorLevel !== null && $logger instanceof LoggerInterface) {
             $error = $res['error'] ?? [];
-            $logger->log($errorLevel, $error['message'], $error);
+            $logger->log($errorLevel, $error->message ?? 'no message', $error);
         }
     }
 
