@@ -250,13 +250,17 @@ class RpcHandler
 
     /**
      * @param string|null $errorLevel
-     * @param mixed[]     $res
+     * @param mixed[] $res
+     * @throws JsonException
      */
     private function log(?string $errorLevel, array $res): void
     {
         $logger = $this->getLogger();
         if ($errorLevel !== null && $logger instanceof LoggerInterface) {
-            $error = $res['error'] ?? [];
+            $error = json_decode(
+                json_encode($res['error'] ?? [], JSON_THROW_ON_ERROR),
+                true
+            );
             $logger->log($errorLevel, $error->message ?? 'no message', $error);
         }
     }
