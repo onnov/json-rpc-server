@@ -12,6 +12,9 @@ declare(strict_types=1);
 
 namespace Onnov\JsonRpcServer\Validator;
 
+use Onnov\JsonRpcServer\Traits\JsonHelperTrait;
+use stdClass;
+
 /**
  * Class JsonRpcSchema
  *
@@ -19,12 +22,14 @@ namespace Onnov\JsonRpcServer\Validator;
  */
 class JsonRpcSchema
 {
+    use JsonHelperTrait;
+
     /**
-     * @param mixed[] $paramsSchema
+     * @param stdClass|null $paramsSchema
      *
-     * @return mixed[]
+     * @return stdClass
      */
-    public function get(array $paramsSchema = []): array
+    public function get(stdClass $paramsSchema = null): stdClass
     {
         $params = [
             'type' => [
@@ -37,11 +42,11 @@ class JsonRpcSchema
             ],
         ];
 
-        if (count($paramsSchema) > 0) {
+        if ($paramsSchema !== null) {
             $params = $paramsSchema;
         }
 
-        return [
+        return $this->assocArrToObject([
             'type'                 => 'object',
             'description'          => 'json rpc 2.0 request schema',
             'additionalProperties' => false,
@@ -71,6 +76,6 @@ class JsonRpcSchema
                     ],
                 ],
             ],
-        ];
+        ]);
     }
 }

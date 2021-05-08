@@ -10,27 +10,27 @@
 
 declare(strict_types=1);
 
-namespace Onnov\JsonRpcServer\Model;
+namespace Onnov\JsonRpcServer\Result;
 
 /**
- * Class RpcResultAbstractNull
- * @package Onnov\JsonRpcServer\Model
+ * Class RpcResultFloat
+ * @package Onnov\JsonRpcServer\Result
  */
-class RpcResultString extends RpcResultAbstract
+class RpcResultFloat extends RpcResultAbstract
 {
     /**
      * RpcResultString constructor.
-     * @param string $result
+     * @param float $result
      */
-    public function __construct(string $result)
+    public function __construct(float $result)
     {
         $this->result = $result;
     }
 
     /**
-     * @return string
+     * @return float
      */
-    public function getResult(): string
+    public function getResult(): float
     {
         return $this->result;
     }

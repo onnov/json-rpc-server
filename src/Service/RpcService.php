@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Onnov\JsonRpcServer\Service;
 
-use Onnov\JsonRpcServer\Exception\InvalidRequestException;
+use JsonMapper;
+use JsonMapper_Exception;
 use Onnov\JsonRpcServer\Exception\ParseErrorException;
 use Exception;
+use Onnov\JsonRpcServer\Model\RpcModel;
 use Onnov\JsonRpcServer\Validator\JsonRpcSchema;
 use Onnov\JsonRpcServer\Validator\JsonSchemaValidator;
+use stdClass;
 
 /**
  * Class Rpc
@@ -17,24 +20,33 @@ use Onnov\JsonRpcServer\Validator\JsonSchemaValidator;
  */
 class RpcService
 {
+    /** @var bool */
+    private $batch = true;
+
     /** @var JsonSchemaValidator */
     private $validator;
 
     /** @var JsonRpcSchema */
     private $rpcSchema;
 
+    /** @var JsonMapper */
+    private $mapper;
+
     /**
      * RpcService constructor.
      *
      * @param JsonSchemaValidator $validator
-     * @param JsonRpcSchema       $rpcSchema
+     * @param JsonRpcSchema $rpcSchema
+     * @param JsonMapper $mapper
      */
     public function __construct(
         JsonSchemaValidator $validator,
-        JsonRpcSchema $rpcSchema
+        JsonRpcSchema $rpcSchema,
+        JsonMapper $mapper
     ) {
         $this->validator = $validator;
         $this->rpcSchema = $rpcSchema;
+        $this->mapper = $mapper;
     }
 
     /**
@@ -42,7 +54,6 @@ class RpcService
      *
      * @return mixed[]
      * @throws ParseErrorException
-     * @throws InvalidRequestException
      */
     public function jsonParse(string $json): array
     {
@@ -54,16 +65,17 @@ class RpcService
         try {
             $data = json_decode(
                 $json,
-                true,
+                false,
                 512,
                 JSON_THROW_ON_ERROR
             );
+
+            if ($data instanceof stdClass) {
+                $data = [$data];
+                $this->setBatch(false);
+            }
         } catch (Exception $e) {
-            throw new ParseErrorException(
-                $e->getMessage(),
-                $e->getCode(),
-                $e->getPrevious()
-            );
+            throw new ParseErrorException('', 0, $e);
         }
 
         return $data;
@@ -72,20 +84,48 @@ class RpcService
     /**
      * Проверим RPC
      *
-     * @param mixed[] $data
+     * @param stdClass $data
      */
-    public function validateJsonRpc(array $data): void
+    private function validateJsonRpc(stdClass $data): void
     {
-        $this->getValidator()->validate($this->getRpcSchema()->get(), $data);
+        $this
+            ->getValidator()
+            ->validate(
+                $this->getRpcSchema()->get(),
+                $data,
+                'jsonRpc'
+            );
     }
 
     /**
-     * @param mixed[] $data
+     * @param stdClass $data
+     * @return RpcModel
+     */
+    public function getRpc(stdClass $data): RpcModel
+    {
+        $this->validateJsonRpc($data);
+
+        try {
+            return $this->getMapper()->map($data, new RpcModel());
+        } catch (JsonMapper_Exception $e) {
+            throw new ParseErrorException('', 0, $e);
+        }
+    }
+
+    /**
      * @return bool
      */
-    public function isAssoc(array $data): bool
+    public function isBatch(): bool
     {
-        return array_keys($data) !== range(0, count($data) - 1);
+        return $this->batch;
+    }
+
+    /**
+     * @param bool $batch
+     */
+    public function setBatch(bool $batch): void
+    {
+        $this->batch = $batch;
     }
 
     /**
@@ -102,5 +142,13 @@ class RpcService
     public function getRpcSchema(): JsonRpcSchema
     {
         return $this->rpcSchema;
+    }
+
+    /**
+     * @return JsonMapper
+     */
+    public function getMapper(): JsonMapper
+    {
+        return $this->mapper;
     }
 }

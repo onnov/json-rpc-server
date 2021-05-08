@@ -10,11 +10,11 @@
 
 declare(strict_types=1);
 
-namespace Onnov\JsonRpcServer\Model;
+namespace Onnov\JsonRpcServer\Result;
 
 /**
- * Class RpcResultAbstractNull
- * @package Onnov\JsonRpcServer\Model
+ * Class RpcResultInt
+ * @package Onnov\JsonRpcServer\Result
  */
 class RpcResultInt extends RpcResultAbstract
 {

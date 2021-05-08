@@ -10,11 +10,11 @@
 
 declare(strict_types=1);
 
-namespace Onnov\JsonRpcServer\Model;
+namespace Onnov\JsonRpcServer\Result;
 
 /**
  * Interface RpcResultInterface
- * @package Onnov\JsonRpcServer\Model
+ * @package Onnov\JsonRpcServer\Result
  */
 interface RpcResultInterface
 {

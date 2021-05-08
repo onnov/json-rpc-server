@@ -12,14 +12,14 @@ declare(strict_types=1);
 
 namespace Onnov\JsonRpcServer;
 
-use Onnov\JsonRpcServer\Model\RpcResultInterface;
+use Onnov\JsonRpcServer\Definition\RpcProcedureDefinition;
+use Onnov\JsonRpcServer\Result\RpcResultInterface;
 
 /**
- * Interface ApiMethodInterface
- *
+ * Interface RpcProcedureInterface
  * @package Onnov\JsonRpcServer
  */
-interface ApiMethodInterface
+interface RpcProcedureInterface
 {
     /**
      * @return RpcResultInterface
@@ -27,12 +27,7 @@ interface ApiMethodInterface
     public function execute(): RpcResultInterface;
 
     /**
-     * @return mixed[]
+     * @return RpcProcedureDefinition
      */
-    public function requestSchema(): array;
-
-    /**
-     * @return mixed[]
-     */
-    public function responseSchema(): array;
+    public function getDefinition(): RpcProcedureDefinition;
 }
