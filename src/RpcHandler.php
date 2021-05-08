@@ -62,6 +62,7 @@ class RpcHandler
     /**
      * @param RpcRun $rpcRun
      * @return string
+     * @throws JsonException
      */
     public function run(RpcRun $rpcRun): string
     {
@@ -105,6 +106,7 @@ class RpcHandler
      * @param RpcRun $rpcRun
      * @param stdClass $rpc
      * @return string
+     * @throws JsonException
      */
     private function oneRun(
         RpcRun $rpcRun,
@@ -202,6 +204,7 @@ class RpcHandler
      * @param stdClass $rpc
      * @param mixed[] $res
      * @return string
+     * @throws JsonException
      */
     private function getJsonResult(stdClass $rpc, array &$res): string
     {
@@ -222,6 +225,7 @@ class RpcHandler
      * @param Throwable|null $err
      * @param mixed $id
      * @return string
+     * @throws JsonException
      */
     private function getJsonStrError(Throwable $err = null, $id = 'error'): string
     {

@@ -14,7 +14,7 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
 interface RpcFactoryInterface extends ServiceSubscriberInterface, ContainerInterface
 {
     /**
-     * @return mixed[]
+     * @return array<string>
      */
     public static function getSubscribedServices(): array;
 
