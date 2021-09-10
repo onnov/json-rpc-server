@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace Onnov\JsonRpcServer;
 
+use stdClass;
+
 /**
  * Interface ApiMethodInterface
  *
@@ -20,7 +22,7 @@ namespace Onnov\JsonRpcServer;
 interface ApiMethodInterface
 {
     /**
-     * @return array|string|int|float|null
+     * @return stdClass|array|string|int|float|null
      */
     public function execute();
 
