@@ -19,5 +19,4 @@ use InvalidArgumentException;
  */
 class InvalidAuthorizeException extends InvalidArgumentException
 {
-
 }

@@ -236,7 +236,7 @@ class RpcHandler
         $data = '';
         $msg = 'Parse error';
         if ($err !== null) {
-            $data = ', "data" => {"code": ' . $err->getCode() . ', "message": "' . $err->getMessage() . '"}';
+            $data = ', "data": {"code": ' . $err->getCode() . ', "message": "' . $err->getMessage() . '"}';
             $msg = 'Parse error (' . $err->getMessage() . ')';
         }
 

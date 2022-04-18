@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace Onnov\JsonRpcServer\Validator;
 
 use Onnov\JsonRpcServer\Traits\JsonHelperTrait;
+use Opis\JsonSchema\Errors\ErrorFormatter;
 use Opis\JsonSchema\Validator;
 use Opis\JsonSchema\Schema;
 use stdClass;
@@ -59,27 +60,20 @@ class JsonSchemaValidator
             ],
         ];
 
-        $result = $this->getValidator()->schemaValidation(
-            $dataPlus,
-            new Schema($schemaPlus),
-            10
-        );
+        $result = $this
+            ->getValidator()
+            ->setMaxErrors(10)
+            ->validate(
+                $dataPlus,
+                $schemaPlus
+            );
 
         if (!$result->isValid()) {
-            $errors = $result->getErrors();
-            $errData = [];
-            foreach ($errors as $error) {
-                $errData[$error->keyword()] = [
-                    $error->dataPointer(),
-                    $error->keywordArgs()
-                ];
-            }
-
             throw new InvalidParamsException(
                 '', //'Data validation error', // 'Ошибка валидации данных',
                 0,
                 null,
-                $errData
+                (new ErrorFormatter())->formatFlat($result->error())
             );
         }
     }

@@ -19,5 +19,4 @@ use BadMethodCallException;
  */
 class MethodNotFoundException extends BadMethodCallException
 {
-
 }
