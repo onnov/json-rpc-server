@@ -6,6 +6,16 @@
 
 ## Install
 
+[Composer](https://getcomposer.org) (recommended)
+Use Composer to install this library from Packagist: onnov/json-rpc-server
+
+Run the following command from your project directory to add the dependency:
+```bash
+composer require onnov/json-rpc-server
+```
+
+Alternatively, to load the dev-master branch, add the dependency directly to the composer.json file.
+
 composer.json
 ```
  "repositories": [
