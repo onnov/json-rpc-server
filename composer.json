@@ -16,7 +16,7 @@
     "opis/json-schema": "^2",
     "symfony/service-contracts": "^1|^2|^3",
     "symfony/dependency-injection": "^3|^4|^5|^6",
-    "psr/log": "^1",
+    "psr/log": "^1|^2|^3",
     "netresearch/jsonmapper": "^4"
   },
   "require-dev": {
