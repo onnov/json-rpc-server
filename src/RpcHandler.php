@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Onnov\JsonRpcServer;
 
+use Exception;
 use JsonException;
 use JsonMapper;
 use Onnov\JsonRpcServer\Definition\RpcAuthDefinition;
@@ -31,6 +32,9 @@ use Onnov\JsonRpcServer\Validator\JsonSchemaValidator;
  */
 class RpcHandler
 {
+    /** @var Exception|null */
+    private $exception = null;
+
     /** @var LoggerInterface|null */
     private $logger;
 
@@ -131,6 +135,7 @@ class RpcHandler
                 $rpcObj
             );
         } catch (InvalidAuthorizeException | MethodNotFoundException $e) {
+            $this->setException($e);
             $error = $this
                 ->getRpcError()
                 ->getErrorByName($this->getExceptionName($e), $e);
@@ -141,6 +146,7 @@ class RpcHandler
             | MethodErrorException
             | ParseErrorException $e
         ) {
+            $this->setException($e);
             $error = $this
                 ->getRpcError()
                 ->getErrorByName($this->getExceptionName($e), $e);
@@ -149,6 +155,7 @@ class RpcHandler
                 $error->setData((object)$e->getData());
             }
         } catch (Throwable $t) {
+            $this->setException($t);
             $error = $this
                 ->getRpcError()
                 ->getErrorByName('Throwable');
@@ -315,5 +322,21 @@ class RpcHandler
     public function setRpcError(RpcError $rpcError): void
     {
         $this->rpcError = $rpcError;
+    }
+
+    /**
+     * @return Exception|null
+     */
+    public function getException(): ?Exception
+    {
+        return $this->exception;
+    }
+
+    /**
+     * @param Exception|null $exception
+     */
+    public function setException(?Exception $exception): void
+    {
+        $this->exception = $exception;
     }
 }
