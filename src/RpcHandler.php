@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Onnov\JsonRpcServer;
 
-use Exception;
 use JsonException;
 use JsonMapper;
 use Onnov\JsonRpcServer\Definition\RpcAuthDefinition;
@@ -32,8 +31,8 @@ use Onnov\JsonRpcServer\Validator\JsonSchemaValidator;
  */
 class RpcHandler
 {
-    /** @var Exception|null */
-    private $exception = null;
+    /** @var Throwable|null */
+    private $throwable = null;
 
     /** @var LoggerInterface|null */
     private $logger;
@@ -135,7 +134,7 @@ class RpcHandler
                 $rpcObj
             );
         } catch (InvalidAuthorizeException | MethodNotFoundException $e) {
-            $this->setException($e);
+            $this->setThrowable($e);
             $error = $this
                 ->getRpcError()
                 ->getErrorByName($this->getExceptionName($e), $e);
@@ -146,7 +145,7 @@ class RpcHandler
             | MethodErrorException
             | ParseErrorException $e
         ) {
-            $this->setException($e);
+            $this->setThrowable($e);
             $error = $this
                 ->getRpcError()
                 ->getErrorByName($this->getExceptionName($e), $e);
@@ -155,7 +154,7 @@ class RpcHandler
                 $error->setData((object)$e->getData());
             }
         } catch (Throwable $t) {
-            $this->setException($t);
+            $this->setThrowable($t);
             $error = $this
                 ->getRpcError()
                 ->getErrorByName('Throwable');
@@ -325,18 +324,20 @@ class RpcHandler
     }
 
     /**
-     * @return Exception|null
+     * @return Throwable|null
      */
-    public function getException(): ?Exception
+    public function getThrowable(): ?Throwable
     {
-        return $this->exception;
+        return $this->throwable;
     }
 
     /**
-     * @param Exception|null $exception
+     * @param Throwable|null $throwable
+     * @return RpcHandler
      */
-    public function setException(?Exception $exception): void
+    public function setThrowable(?Throwable $throwable): RpcHandler
     {
-        $this->exception = $exception;
+        $this->throwable = $throwable;
+        return $this;
     }
 }
