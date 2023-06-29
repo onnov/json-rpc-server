@@ -20,15 +20,18 @@ use Throwable;
  */
 class InvalidParamsException extends RuntimeException
 {
-    /** @var mixed[]|null */
+    /**
+     * @var mixed[]|null 
+     */
     protected $data;
 
     /**
      * InternalErrorException constructor.
-     * @param string $message
-     * @param int $code
+     *
+     * @param string         $message
+     * @param int            $code
      * @param Throwable|null $previous
-     * @param mixed[]|null $data
+     * @param mixed[]|null   $data
      */
     public function __construct(
         string $message = "",

@@ -16,6 +16,7 @@ use Psr\Log\LogLevel;
 
 /**
  * Class RpcAuthDefinition
+ *
  * @package Onnov\JsonRpcServer\Definition
  */
 class RpcAuthDefinition
@@ -45,6 +46,7 @@ class RpcAuthDefinition
 
     /**
      * RpcAuthDefinition constructor.
+     *
      * @param mixed[] $data
      */
     public function __construct(array $data = [])
@@ -71,7 +73,7 @@ class RpcAuthDefinition
     }
 
     /**
-     * @param RpcErrorDefinition $authError
+     * @param  RpcErrorDefinition $authError
      * @return RpcAuthDefinition
      */
     public function setAuthError(RpcErrorDefinition $authError): self
@@ -90,7 +92,7 @@ class RpcAuthDefinition
     }
 
     /**
-     * @param string[] $procWithoutAuth
+     * @param  string[] $procWithoutAuth
      * @return RpcAuthDefinition
      */
     public function setProcWithoutAuth(array $procWithoutAuth): self
@@ -109,7 +111,7 @@ class RpcAuthDefinition
     }
 
     /**
-     * @param bool $resultAuth
+     * @param  bool $resultAuth
      * @return RpcAuthDefinition
      */
     public function setResultAuth(bool $resultAuth): self

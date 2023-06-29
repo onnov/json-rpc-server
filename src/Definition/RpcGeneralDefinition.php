@@ -16,6 +16,7 @@ use stdClass;
 
 /**
  * Class RpcGeneralDefinition
+ *
  * @package Onnov\JsonRpcServer\Definition
  */
 class RpcGeneralDefinition
@@ -82,7 +83,7 @@ class RpcGeneralDefinition
     }
 
     /**
-     * @param string $jrgen
+     * @param  string $jrgen
      * @return RpcGeneralDefinition
      */
     public function setJrgen(string $jrgen): self
@@ -101,7 +102,7 @@ class RpcGeneralDefinition
     }
 
     /**
-     * @param string $jsonrpc
+     * @param  string $jsonrpc
      * @return RpcGeneralDefinition
      */
     public function setJsonrpc(string $jsonrpc): self
@@ -120,7 +121,7 @@ class RpcGeneralDefinition
     }
 
     /**
-     * @param RpcInfoDefinition $info
+     * @param  RpcInfoDefinition $info
      * @return RpcGeneralDefinition
      */
     public function setInfo(RpcInfoDefinition $info): self
@@ -139,7 +140,7 @@ class RpcGeneralDefinition
     }
 
     /**
-     * @param stdClass|null $definitions
+     * @param  stdClass|null $definitions
      * @return RpcGeneralDefinition
      */
     public function setDefinitions(?stdClass $definitions): self

@@ -17,6 +17,7 @@ use Onnov\JsonRpcServer\Result\RpcResultInterface;
 
 /**
  * Interface RpcProcedureInterface
+ *
  * @package Onnov\JsonRpcServer
  */
 interface RpcProcedureInterface

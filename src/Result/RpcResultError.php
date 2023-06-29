@@ -14,6 +14,7 @@ namespace Onnov\JsonRpcServer\Result;
 
 /**
  * Class RpcResultError
+ *
  * @package Onnov\JsonRpcServer\Result
  */
 class RpcResultError extends RpcResultAbstract

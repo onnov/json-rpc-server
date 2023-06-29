@@ -22,6 +22,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class RunTest
+ *
  * @package Onnov\JsonRpcServer\Tests
  */
 class RunTest extends TestCase
@@ -39,7 +40,7 @@ class RunTest extends TestCase
             new RpcRun(
                 [
                     'rpcFactory' => $this->getFactory(),
-                    'json'       => $jsonIn,
+                    'json' => $jsonIn,
                 ]
             )
         );
@@ -64,21 +65,21 @@ class RunTest extends TestCase
     {
         $handler = new RpcHandler();
 
-//        $this->expectException(ParseErrorException::class);
+        //        $this->expectException(ParseErrorException::class);
 
         self::assertStringContainsString(
             implode(
                 ',',
                 [
                     '{"jsonrpc": "2.0", "error": {"code": -32700, "message": "Parse error"',
-                    ' "data" => {"code": 4, "message": "Syntax error"}}, "id": "error"}'
+                    ' "data": {"code": 4, "message": "Syntax error"}}, "id": "error"}'
                 ]
             ),
             $handler->run(
                 new RpcRun(
                     [
                         'rpcFactory' => $this->getFactory(),
-                        'json'       => 'any not json',
+                        'json' => 'any not json',
                     ]
                 )
             )
@@ -93,7 +94,7 @@ class RunTest extends TestCase
             new RpcRun(
                 [
                     'rpcFactory' => $this->getFactory(false),
-                    'json'       => '{"jsonrpc": "2.0", "method": "test", "id": 777}',
+                    'json' => '{"jsonrpc": "2.0", "method": "test", "id": 777}',
                 ]
             )
         );
@@ -108,18 +109,20 @@ class RunTest extends TestCase
     {
         $handler = new RpcHandler();
 
+        $handler->setDetailError(true);
         $res = $handler->run(
             new RpcRun(
                 [
                     'rpcFactory' => $this->getFactory(),
-                    'json'       => '{"jsonrpc": "3.0", "method": "test", "id": 777}',
+                    'json' => '{"jsonrpc": "3.0", "method": "test", "id": 777}',
                 ]
             )
         );
 
         self::assertStringContainsString(
-            '{"jsonrpc":"2.0","error":{"code":-32602,"message":"Invalid params",'
-            . '"data":{"enum":[["jsonRpc","jsonrpc"],{"expected":["2.0"]}]}},"id":777}',
+            '{"jsonrpc":"2.0","error":{"code":-32602,"message":"Invalid params","data":'
+            . '{"0":"The properties must match schema: jsonRpc","1":"The properties must match schema: jsonrpc"'
+            . ',"2":"The data should match one item from enum"}},"id":777}',
             $res
         );
     }
@@ -132,7 +135,7 @@ class RunTest extends TestCase
             new RpcRun(
                 [
                     'rpcFactory' => $this->getFactory(),
-                    'json'       => '{"jsonrpc": "2.0", "method": "test", "id": 777}',
+                    'json' => '{"jsonrpc": "2.0", "method": "test", "id": 777}',
                     'auth' => new RpcAuthDefinition(['resultAuth' => false])
                 ]
             )
@@ -152,7 +155,7 @@ class RunTest extends TestCase
             new RpcRun(
                 [
                     'rpcFactory' => $this->getFactory(),
-                    'json'       => '{"jsonrpc": "2.0", "method": "test", "id": 777}',
+                    'json' => '{"jsonrpc": "2.0", "method": "test", "id": 777}',
                     'auth' => new RpcAuthDefinition(['resultAuth' => false, 'procWithoutAuth' => ['test']]),
                 ]
             )
@@ -172,7 +175,7 @@ class RunTest extends TestCase
             new RpcRun(
                 [
                     'rpcFactory' => $this->getFactory(),
-                    'json'       => '[{"jsonrpc": "2.0", "method": "test", "id": 777},'
+                    'json' => '[{"jsonrpc": "2.0", "method": "test", "id": 777},'
                         . ' {"jsonrpc": "2.0", "method": "test", "id": 888}]',
                 ]
             )
@@ -192,7 +195,7 @@ class RunTest extends TestCase
             new RpcRun(
                 [
                     'rpcFactory' => $this->getFactory(),
-                    'json'       => '[{"jsonrpc": "2.0", "method": "test", "id": 777}, "any not json"]',
+                    'json' => '[{"jsonrpc": "2.0", "method": "test", "id": 777}, "any not json"]',
                 ]
             )
         );
@@ -207,20 +210,20 @@ class RunTest extends TestCase
     public function testBatchNotRpc(): void
     {
         $handler = new RpcHandler();
-
+        $handler->setDetailError(true);
         $res = $handler->run(
             new RpcRun(
                 [
                     'rpcFactory' => $this->getFactory(),
-                    'json'       => '[{"jsonrpc": "2.0", "method": "test", "id": 777}, {"method": "test", "id": 777}]',
+                    'json' => '[{"jsonrpc": "2.0", "method": "test", "id": 777}, {"method": "test", "id": 777}]',
                 ]
             )
         );
 
         self::assertStringContainsString(
-            '[{"jsonrpc":"2.0","result":"success","id":777},'
-            . '{"jsonrpc":"2.0","error":{"code":-32602,"message":"Invalid params",'
-            . '"data":{"required":[["jsonRpc"],{"missing":"jsonrpc"}]}},"id":777}]',
+            '[{"jsonrpc":"2.0","result":"success","id":777},{"jsonrpc":"2.0","error":'
+            . '{"code":-32602,"message":"Invalid params","data":{"0":"The properties must match schema: jsonRpc",'
+            . '"1":"The required properties (jsonrpc) are missing"}},"id":777}]',
             $res
         );
     }
@@ -244,7 +247,9 @@ class RunTest extends TestCase
             ->method('get')
             ->willReturn($method);
 
-        /** @var RpcFactoryInterface $apiFactory */
+        /**
+         * @var RpcFactoryInterface $apiFactory
+         */
         $apiFactory = $factory;
 
         return $apiFactory;

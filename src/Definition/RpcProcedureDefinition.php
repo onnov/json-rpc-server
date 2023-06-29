@@ -16,6 +16,7 @@ use stdClass;
 
 /**
  * Class RpcProcedureDefinition
+ *
  * @package Onnov\JsonRpcServer\Definition
  */
 class RpcProcedureDefinition
@@ -80,7 +81,7 @@ class RpcProcedureDefinition
     }
 
     /**
-     * @param string $summary
+     * @param  string $summary
      * @return RpcProcedureDefinition
      */
     public function setSummary(string $summary): self
@@ -99,7 +100,7 @@ class RpcProcedureDefinition
     }
 
     /**
-     * @param string|string[]|null $description
+     * @param  string|string[]|null $description
      * @return RpcProcedureDefinition
      */
     public function setDescription($description): self
@@ -118,7 +119,7 @@ class RpcProcedureDefinition
     }
 
     /**
-     * @param string[]|null $tags
+     * @param  string[]|null $tags
      * @return RpcProcedureDefinition
      */
     public function setTags(?array $tags): self
@@ -137,7 +138,7 @@ class RpcProcedureDefinition
     }
 
     /**
-     * @param stdClass|null $params
+     * @param  stdClass|null $params
      * @return RpcProcedureDefinition
      */
     public function setParams(?stdClass $params): self
@@ -156,7 +157,7 @@ class RpcProcedureDefinition
     }
 
     /**
-     * @param object|null $paramsObject
+     * @param  object|null $paramsObject
      * @return RpcProcedureDefinition
      */
     public function setParamsObject(?object $paramsObject): self
@@ -175,7 +176,7 @@ class RpcProcedureDefinition
     }
 
     /**
-     * @param stdClass|null $result
+     * @param  stdClass|null $result
      * @return RpcProcedureDefinition
      */
     public function setResult(?stdClass $result): self
@@ -194,7 +195,7 @@ class RpcProcedureDefinition
     }
 
     /**
-     * @param RpcErrorDefinition[]|null $errors
+     * @param  RpcErrorDefinition[]|null $errors
      * @return RpcProcedureDefinition
      */
     public function setErrors(?array $errors): self

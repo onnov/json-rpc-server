@@ -16,6 +16,7 @@ use stdClass;
 
 /**
  * Class RpcErrorDefinition
+ *
  * @package Onnov\JsonRpcServer\Definition
  */
 class RpcErrorDefinition
@@ -59,6 +60,7 @@ class RpcErrorDefinition
 
     /**
      * RpcErrorDefinition constructor.
+     *
      * @param mixed[] $data
      */
     public function __construct(array $data = [])
@@ -84,7 +86,7 @@ class RpcErrorDefinition
     }
 
     /**
-     * @param string|null $description
+     * @param  string|null $description
      * @return RpcErrorDefinition
      */
     public function setDescription(?string $description): self
@@ -103,7 +105,7 @@ class RpcErrorDefinition
     }
 
     /**
-     * @param int $code
+     * @param  int $code
      * @return RpcErrorDefinition
      */
     public function setCode(int $code): self
@@ -122,7 +124,7 @@ class RpcErrorDefinition
     }
 
     /**
-     * @param string $message
+     * @param  string $message
      * @return RpcErrorDefinition
      */
     public function setMessage(string $message): self
@@ -141,7 +143,7 @@ class RpcErrorDefinition
     }
 
     /**
-     * @param stdClass|null $data
+     * @param  stdClass|null $data
      * @return RpcErrorDefinition
      */
     public function setData(?stdClass $data): self
@@ -160,7 +162,7 @@ class RpcErrorDefinition
     }
 
     /**
-     * @param string|null $logLevel
+     * @param  string|null $logLevel
      * @return RpcErrorDefinition
      */
     public function setLogLevel(?string $logLevel): self

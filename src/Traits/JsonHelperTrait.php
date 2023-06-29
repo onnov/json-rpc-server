@@ -19,12 +19,13 @@ use stdClass;
 
 /**
  * Class JsonHelperTrait
+ *
  * @package Onnov\JsonRpcServer\Traits
  */
 trait JsonHelperTrait
 {
     /**
-     * @param mixed[] $array
+     * @param  mixed[] $array
      * @return mixed
      */
     public function arrayToObject(array $array)
@@ -42,7 +43,7 @@ trait JsonHelperTrait
     }
 
     /**
-     * @param mixed[] $array
+     * @param  mixed[] $array
      * @return stdClass
      */
     public function assocArrToObject(array $array): stdClass
@@ -58,7 +59,7 @@ trait JsonHelperTrait
      * method from Kohana
      * Tests if an array is associative or not.
      *
-     * @param mixed[] $array
+     * @param  mixed[] $array
      * @return bool
      */
     public function isAssoc(array &$array): bool

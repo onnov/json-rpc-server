@@ -16,6 +16,7 @@ use stdClass;
 
 /**
  * Class SimpleSchemes
+ *
  * @package Onnov\JsonRpcServer\Model
  */
 class SimpleSchemes

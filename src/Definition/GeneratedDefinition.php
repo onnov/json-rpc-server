@@ -14,6 +14,7 @@ namespace Onnov\JsonRpcServer\Definition;
 
 /**
  * Class GeneratedDefinition
+ *
  * @package Onnov\JsonRpcServer\Definition
  */
 class GeneratedDefinition extends RpcGeneralDefinition
@@ -35,7 +36,7 @@ class GeneratedDefinition extends RpcGeneralDefinition
     }
 
     /**
-     * @param RpcProcedureDefinition[] $methods
+     * @param  RpcProcedureDefinition[] $methods
      * @return GeneratedDefinition
      */
     public function setMethods(array $methods): self

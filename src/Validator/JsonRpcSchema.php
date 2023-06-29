@@ -46,7 +46,8 @@ class JsonRpcSchema
             $params = $paramsSchema;
         }
 
-        return $this->assocArrToObject([
+        return $this->assocArrToObject(
+            [
             'type'                 => 'object',
             'description'          => 'json rpc 2.0 request schema',
             'additionalProperties' => false,
@@ -76,6 +77,7 @@ class JsonRpcSchema
                     ],
                 ],
             ],
-        ]);
+            ]
+        );
     }
 }

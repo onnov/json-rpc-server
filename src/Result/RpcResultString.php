@@ -14,12 +14,14 @@ namespace Onnov\JsonRpcServer\Result;
 
 /**
  * Class RpcResultString
+ *
  * @package Onnov\JsonRpcServer\Result
  */
 class RpcResultString extends RpcResultAbstract
 {
     /**
      * RpcResultString constructor.
+     *
      * @param string $result
      */
     public function __construct(string $result)

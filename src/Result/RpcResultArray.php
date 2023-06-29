@@ -14,12 +14,14 @@ namespace Onnov\JsonRpcServer\Result;
 
 /**
  * Class RpcResultArray
+ *
  * @package Onnov\JsonRpcServer\Result
  */
 class RpcResultArray extends RpcResultAbstract
 {
     /**
      * RpcResultArray constructor.
+     *
      * @param mixed[] $result
      */
     public function __construct(array $result)

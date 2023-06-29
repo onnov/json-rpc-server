@@ -30,21 +30,27 @@ class ApiExecService
 {
     use JsonHelperTrait;
 
-    /** @var JsonSchemaValidator */
+    /**
+     * @var JsonSchemaValidator 
+     */
     protected $validator;
 
-    /** @var JsonRpcSchema */
+    /**
+     * @var JsonRpcSchema 
+     */
     protected $rpcSchema;
 
-    /** @var JsonMapper */
+    /**
+     * @var JsonMapper 
+     */
     private $mapper;
 
     /**
      * ApiExecService constructor.
      *
      * @param JsonSchemaValidator $validator
-     * @param JsonRpcSchema $rpcSchema
-     * @param JsonMapper $mapper
+     * @param JsonRpcSchema       $rpcSchema
+     * @param JsonMapper          $mapper
      */
     public function __construct(
         JsonSchemaValidator $validator,
@@ -57,7 +63,7 @@ class ApiExecService
     }
 
     /**
-     * @param RpcRun $model
+     * @param RpcRun   $model
      * @param RpcModel $rpc
      *
      * @return mixed
@@ -68,23 +74,28 @@ class ApiExecService
     ) {
         $factory = $model->getRpcFactory();
         $method = $rpc->getMethod();
-        /** Проверим существование метода */
+        /**
+ * Проверим существование метода 
+*/
         if ($factory->has($method) === false) {
             throw new MethodNotFoundException(
                 'Method "' . $method . '" not found.'
             );
         }
 
-        /** Создаем экземпляр класса
+        /**
+ * Создаем экземпляр класса
          *
          * @var RpcProcedureInterface $class
          */
         $class = $factory->get($method);
 
-//        /** Проверим соответствие интерфейсу */
-//        $this->checkInterface($class, $method);
+        //        /** Проверим соответствие интерфейсу */
+        //        $this->checkInterface($class, $method);
 
-        /** Валидируем парамертры ЗАПРОСА */
+        /**
+ * Валидируем парамертры ЗАПРОСА 
+*/
         if ($class->getDefinition()->getParams() !== null) {
             $this->getValidator()->validate(
                 $class->getDefinition()->getParams(),
@@ -107,12 +118,16 @@ class ApiExecService
             }
         }
 
-        /** засетим в метод RpcRequest*/
+        /**
+ * засетим в метод RpcRequest
+*/
         if (method_exists($class, 'setRpcRequest')) {
             $class->setRpcRequest(new RpcRequest($rpc, $paramsObject));
         }
 
-        /** Выполним метод */
+        /**
+ * Выполним метод 
+*/
         try {
             $res = $class->execute()->getResult();
         } catch (RpcNumberException $e) {
@@ -130,7 +145,9 @@ class ApiExecService
         }
 
         if ($model->isResponseCheck() && $class->getDefinition()->getResult() !== null) {
-            /** Валидируем парамертры ОТВЕТА */
+            /**
+ * Валидируем парамертры ОТВЕТА 
+*/
             $this->getValidator()->validate(
                 $class->getDefinition()->getResult(),
                 $res,
@@ -141,23 +158,23 @@ class ApiExecService
         return $res;
     }
 
-//    /**
-//     * @param RpcProcedureInterface $class
-//     * @param string $method
-//     */
-//    private function checkInterface(RpcProcedureInterface $class, string $method): void
-//    {
-//        // ???
-//        $interfaces = (array)class_implements($class);
-//        if (
-//            (bool)$interfaces === false
-//            || in_array(RpcProcedureInterface::class, $interfaces, true) === false
-//        ) {
-//            throw new InternalErrorException(
-//                'Method "' . $method . '" does not match Interface.'
-//            );
-//        }
-//    }
+    //    /**
+    //     * @param RpcProcedureInterface $class
+    //     * @param string $method
+    //     */
+    //    private function checkInterface(RpcProcedureInterface $class, string $method): void
+    //    {
+    //        // ???
+    //        $interfaces = (array)class_implements($class);
+    //        if (
+    //            (bool)$interfaces === false
+    //            || in_array(RpcProcedureInterface::class, $interfaces, true) === false
+    //        ) {
+    //            throw new InternalErrorException(
+    //                'Method "' . $method . '" does not match Interface.'
+    //            );
+    //        }
+    //    }
 
     /**
      * @return JsonSchemaValidator

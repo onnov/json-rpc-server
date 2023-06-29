@@ -14,6 +14,7 @@ namespace Onnov\JsonRpcServer\Result;
 
 /**
  * Class RpcResultSuccess
+ *
  * @package Onnov\JsonRpcServer\Result
  */
 class RpcResultSuccess extends RpcResultAbstract

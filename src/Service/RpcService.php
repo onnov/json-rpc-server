@@ -20,24 +20,32 @@ use stdClass;
  */
 class RpcService
 {
-    /** @var bool */
+    /**
+     * @var bool 
+     */
     private $batch = true;
 
-    /** @var JsonSchemaValidator */
+    /**
+     * @var JsonSchemaValidator 
+     */
     private $validator;
 
-    /** @var JsonRpcSchema */
+    /**
+     * @var JsonRpcSchema 
+     */
     private $rpcSchema;
 
-    /** @var JsonMapper */
+    /**
+     * @var JsonMapper 
+     */
     private $mapper;
 
     /**
      * RpcService constructor.
      *
      * @param JsonSchemaValidator $validator
-     * @param JsonRpcSchema $rpcSchema
-     * @param JsonMapper $mapper
+     * @param JsonRpcSchema       $rpcSchema
+     * @param JsonMapper          $mapper
      */
     public function __construct(
         JsonSchemaValidator $validator,
@@ -98,7 +106,7 @@ class RpcService
     }
 
     /**
-     * @param stdClass $data
+     * @param  stdClass $data
      * @return RpcModel
      */
     public function getRpc(stdClass $data): RpcModel

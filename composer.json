@@ -32,7 +32,7 @@
   },
   "scripts": {
     "phpcs": "phpcs --config-set encoding utf-8; phpcs -p --standard=PSR12 ./src/",
-    "phpcbf": "phpcbf",
+    "phpcbf": "phpcbf src tests",
     "phpmd": "phpmd src/ text cleancode,codesize,design",
     "phpstan": "phpstan analyse src/ -c phpstan.neon --level=7 --no-progress -vvv --memory-limit=-1",
     "phpunit": "phpunit",

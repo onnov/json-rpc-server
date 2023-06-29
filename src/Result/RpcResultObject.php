@@ -16,15 +16,19 @@ use stdClass;
 
 /**
  * Class RpcResultObject
+ *
  * @package Onnov\JsonRpcServer\Result
  */
 class RpcResultObject implements RpcResultInterface
 {
-    /** @var stdClass */
+    /**
+     * @var stdClass 
+     */
     protected $result;
 
     /**
      * RpcResultArray constructor.
+     *
      * @param stdClass $result
      */
     public function __construct(stdClass $result)

@@ -21,15 +21,18 @@ use Throwable;
  */
 class MethodErrorException extends RuntimeException
 {
-    /** @var stdClass|null */
+    /**
+     * @var stdClass|null 
+     */
     protected $data;
 
     /**
      * InternalErrorException constructor.
-     * @param string $message
-     * @param int $code
+     *
+     * @param string         $message
+     * @param int            $code
      * @param Throwable|null $previous
-     * @param stdClass|null $data
+     * @param stdClass|null  $data
      */
     public function __construct(
         string $message = "",

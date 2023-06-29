@@ -8,13 +8,19 @@ use stdClass;
 
 class RpcRequest
 {
-    /** @var int|string|null */
+    /**
+     * @var int|string|null 
+     */
     private $id;
 
-    /** @var string */
+    /**
+     * @var string 
+     */
     private $method;
 
-    /** @var mixed[]|stdClass|null */
+    /**
+     * @var mixed[]|stdClass|null 
+     */
     private $params;
 
     /**
@@ -27,7 +33,7 @@ class RpcRequest
     /**
      * RpcRequest constructor.
      *
-     * @param RpcModel $validRpc
+     * @param RpcModel    $validRpc
      * @param object|null $paramsObject
      */
     public function __construct(RpcModel $validRpc, ?object $paramsObject = null)

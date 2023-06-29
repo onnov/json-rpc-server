@@ -14,6 +14,7 @@ namespace Onnov\JsonRpcServer\Definition;
 
 /**
  * Trait CastableToArray
+ *
  * @package Onnov\JsonRpcServer\Definition
  */
 trait CastableToArray

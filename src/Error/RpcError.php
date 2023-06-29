@@ -18,6 +18,7 @@ use Throwable;
 
 /**
  * Class ErrorService
+ *
  * @package Onnov\JsonRpcServer\Service
  */
 class RpcError
@@ -29,6 +30,7 @@ class RpcError
 
     /**
      * ErrorService constructor.
+     *
      * @param RpcErrorDefinition $authError
      */
     public function __construct(RpcErrorDefinition $authError)
@@ -81,8 +83,8 @@ class RpcError
     }
 
     /**
-     * @param string $errorName
-     * @param Throwable|null $throw
+     * @param  string         $errorName
+     * @param  Throwable|null $throw
      * @return RpcErrorDefinition
      */
     public function getErrorByName(string $errorName, Throwable $throw = null): RpcErrorDefinition
@@ -103,7 +105,7 @@ class RpcError
     }
 
     /**
-     * @param string $errorName
+     * @param string             $errorName
      * @param RpcErrorDefinition $error
      */
     public function addOrReplaceError(string $errorName, RpcErrorDefinition $error): void

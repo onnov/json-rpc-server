@@ -27,27 +27,22 @@ use Onnov\JsonRpcServer\Validator\JsonSchemaValidator;
 
 /**
  * Class RpcHandler
+ *
  * @package Onnov\JsonRpcServer
  */
 class RpcHandler
 {
-    /** @var Throwable|null */
-    private $throwable = null;
+    private ?Throwable $throwable = null;
 
-    /** @var LoggerInterface|null */
-    private $logger;
-
-    /** @var RpcService */
-    private $rpcService;
-
-    /** @var ApiExecService */
-    private $apiExecService;
-
-    /** @var RpcError */
-    private $rpcError;
+    private ?LoggerInterface $logger;
+    private RpcService $rpcService;
+    private ApiExecService $apiExecService;
+    private RpcError $rpcError;
+    private bool $detailError = false;
 
     /**
      * JsonRpcHandler constructor.
+     *
      * @param LoggerInterface|null $logger
      */
     public function __construct(LoggerInterface $logger = null)
@@ -63,7 +58,7 @@ class RpcHandler
     }
 
     /**
-     * @param RpcRun $rpcRun
+     * @param  RpcRun $rpcRun
      * @return string
      * @throws JsonException
      */
@@ -74,22 +69,24 @@ class RpcHandler
         }
         $rpcService = $this->getRpcService();
 
-        /** Парсим */
+        /**
+ * Парсим 
+*/
         try {
             $data = $rpcService->jsonParse($rpcRun->getJson());
 
             $resArr = [];
             foreach ($data as $rpc) {
                 switch (true) {
-                    case ($rpc instanceof stdClass):
-                        // TODO впилить паралельное выполнение, возможно amphp/amp
-                        $resArr[] = $this->oneRun(
-                            $rpcRun,
-                            $rpc
-                        );
-                        break;
-                    default:
-                        $resArr[] = $this->getJsonStrError();
+                case ($rpc instanceof stdClass):
+                    // TODO впилить паралельное выполнение, возможно amphp/amp
+                    $resArr[] = $this->oneRun(
+                        $rpcRun,
+                        $rpc
+                    );
+                    break;
+                default:
+                    $resArr[] = $this->getJsonStrError();
                 }
             }
 
@@ -106,8 +103,8 @@ class RpcHandler
     }
 
     /**
-     * @param RpcRun $rpcRun
-     * @param stdClass $rpc
+     * @param  RpcRun   $rpcRun
+     * @param  stdClass $rpc
      * @return string
      * @throws JsonException
      */
@@ -122,13 +119,19 @@ class RpcHandler
         $error = null;
 
         try {
-            /** валидируем и парсим JsonRPC */
+            /**
+ * валидируем и парсим JsonRPC 
+*/
             $rpcObj = $this->getRpcService()->getRpc($rpc);
 
-            /** Проверим авторизацию */
+            /**
+ * Проверим авторизацию 
+*/
             $this->authCheck($rpcObj->getMethod(), $rpcRun->getAuth());
 
-            /** Пытаемся выполнить запрос */
+            /**
+ * Пытаемся выполнить запрос 
+*/
             $res['result'] = $this->getApiExeService()->exe(
                 $rpcRun,
                 $rpcObj
@@ -158,13 +161,15 @@ class RpcHandler
             $error = $this
                 ->getRpcError()
                 ->getErrorByName('Throwable');
-            $error->setData((object)[
+            $error->setData(
+                (object)[
                 'exception' => get_class($t),
                 'code'      => $t->getCode(),
                 'message'   => $t->getMessage(),
                 'file'      => $t->getFile(),
                 'line'      => $t->getLine(),
-            ]);
+                ]
+            );
         }
 
         if ($error !== null) {
@@ -172,7 +177,7 @@ class RpcHandler
                 'code' => $error->getCode(),
                 'message' => $error->getMessage(),
             ];
-            if ($error->getData() !== null) {
+            if ($this->isDetailError() && $error->getData() !== null) {
                 $res['error']->data = $error->getData();
             }
             $this->log($error->getLogLevel(), $res);
@@ -182,7 +187,7 @@ class RpcHandler
     }
 
     /**
-     * @param Throwable $throw
+     * @param  Throwable $throw
      * @return string
      */
     private function getExceptionName(Throwable $throw): string
@@ -193,13 +198,12 @@ class RpcHandler
     }
 
     /**
-     * @param string $method
+     * @param string            $method
      * @param RpcAuthDefinition $auth
      */
     private function authCheck(string $method, RpcAuthDefinition $auth): void
     {
-        if (
-            $auth->isResultAuth() === false
+        if ($auth->isResultAuth() === false
             && in_array($method, $auth->getProcWithoutAuth(), true) === false
         ) {
             throw new InvalidAuthorizeException();
@@ -207,8 +211,8 @@ class RpcHandler
     }
 
     /**
-     * @param stdClass $rpc
-     * @param mixed[] $res
+     * @param  stdClass $rpc
+     * @param  mixed[]  $res
      * @return string
      * @throws JsonException
      */
@@ -228,8 +232,8 @@ class RpcHandler
     }
 
     /**
-     * @param Throwable|null $err
-     * @param mixed $id
+     * @param  Throwable|null $err
+     * @param  mixed          $id
      * @return string
      * @throws JsonException
      */
@@ -259,8 +263,8 @@ class RpcHandler
     }
 
     /**
-     * @param string|null $errorLevel
-     * @param mixed[] $res
+     * @param  string|null $errorLevel
+     * @param  mixed[]     $res
      * @throws JsonException
      */
     private function log(?string $errorLevel, array $res): void
@@ -332,12 +336,48 @@ class RpcHandler
     }
 
     /**
-     * @param Throwable|null $throwable
+     * @param  Throwable|null $throwable
      * @return RpcHandler
      */
     public function setThrowable(?Throwable $throwable): RpcHandler
     {
         $this->throwable = $throwable;
+        return $this;
+    }
+
+    /**
+     * @return ApiExecService
+     */
+    public function getApiExecService(): ApiExecService
+    {
+        return $this->apiExecService;
+    }
+
+    /**
+     * @param  ApiExecService $apiExecService
+     * @return RpcHandler
+     */
+    public function setApiExecService(ApiExecService $apiExecService): RpcHandler
+    {
+        $this->apiExecService = $apiExecService;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDetailError(): bool
+    {
+        return $this->detailError;
+    }
+
+    /**
+     * @param  bool $detailError
+     * @return RpcHandler
+     */
+    public function setDetailError(bool $detailError): RpcHandler
+    {
+        $this->detailError = $detailError;
         return $this;
     }
 }

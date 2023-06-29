@@ -21,13 +21,16 @@ use Onnov\JsonRpcServer\Exception\InvalidParamsException;
 
 /**
  * Class JsonSchemaValidator
+ *
  * @package App\Validator\JsonSchema
  */
 class JsonSchemaValidator
 {
     use JsonHelperTrait;
 
-    /** @var Validator */
+    /**
+     * @var Validator 
+     */
     protected $validator;
 
     /**
@@ -39,9 +42,9 @@ class JsonSchemaValidator
     }
 
     /**
-     * @param stdClass $schema
+     * @param stdClass                     $schema
      * @param stdClass|mixed[]|scalar|null $data
-     * @param string $dataName
+     * @param string                       $dataName
      */
     public function validate(stdClass $schema, $data, string $dataName = 'data'): void
     {

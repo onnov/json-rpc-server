@@ -14,6 +14,7 @@ namespace Onnov\JsonRpcServer\Result;
 
 /**
  * Interface RpcResultInterface
+ *
  * @package Onnov\JsonRpcServer\Result
  */
 interface RpcResultInterface

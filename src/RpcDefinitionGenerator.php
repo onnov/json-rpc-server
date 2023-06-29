@@ -20,12 +20,13 @@ use Onnov\JsonRpcServer\Definition\RpcGeneralDefinition;
 
 /**
  * Class RpcDefinitionGenerator
+ *
  * @package Onnov\JsonRpcServer
  */
 class RpcDefinitionGenerator
 {
     /**
-     * @param GeneratedDefinition $definition
+     * @param  GeneratedDefinition $definition
      * @return string
      * @throws JsonException
      */
@@ -38,7 +39,7 @@ class RpcDefinitionGenerator
     }
 
     /**
-     * @param GeneratedDefinition $definition
+     * @param  GeneratedDefinition $definition
      * @return mixed[]
      */
     public function convertToArray(GeneratedDefinition $definition): array
@@ -52,7 +53,9 @@ class RpcDefinitionGenerator
             $method = $method->toArray();
             if (is_array($method['errors'])) {
                 $method['errors'] = array_values($method['errors']);
-                /** @var RpcErrorDefinition $error */
+                /**
+ * @var RpcErrorDefinition $error 
+*/
                 foreach ($method['errors'] as &$error) {
                     $error = $error->toArray();
                 }
@@ -66,9 +69,9 @@ class RpcDefinitionGenerator
     }
 
     /**
-     * @param RpcGeneralDefinition $definition
-     * @param RpcFactoryInterface $factory
-     * @param RpcAuthDefinition|null $auth
+     * @param  RpcGeneralDefinition   $definition
+     * @param  RpcFactoryInterface    $factory
+     * @param  RpcAuthDefinition|null $auth
      * @return GeneratedDefinition
      */
     public function generateObject(
@@ -87,11 +90,15 @@ class RpcDefinitionGenerator
         sort($procedures);
         $methods = [];
         foreach ($procedures as $procedure) {
-            /** @var RpcProcedureInterface $procObj */
+            /**
+ * @var RpcProcedureInterface $procObj 
+*/
             $procObj = $factory->get($procedure);
             $procDef = $procObj->getDefinition();
 
-            /** добавим ошибку авторизации */
+            /**
+ * добавим ошибку авторизации 
+*/
             if ($auth !== null && !in_array($procedure, $auth->getProcWithoutAuth(), true)) {
                 $procDef
                     ->setErrors(

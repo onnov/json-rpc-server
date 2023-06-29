@@ -16,12 +16,14 @@ use RuntimeException;
 
 /**
  * Class RpcNumberException
+ *
  * @package Onnov\JsonRpcServer\Exception
  */
 class RpcNumberException extends RuntimeException
 {
     /**
      * RpcNumberException constructor.
+     *
      * @param int $code
      */
     public function __construct(int $code)

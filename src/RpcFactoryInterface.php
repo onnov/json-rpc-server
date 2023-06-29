@@ -9,6 +9,7 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
 /**
  * Interface RpcFactoryInterface
+ *
  * @package Onnov\JsonRpcServer
  */
 interface RpcFactoryInterface extends ServiceSubscriberInterface, ContainerInterface

@@ -9,13 +9,16 @@ use Onnov\JsonRpcServer\Traits\JsonHelperTrait;
 
 /**
  * Class RpcProcedureAbstract
+ *
  * @package Onnov\JsonRpcServer
  */
 abstract class RpcProcedureAbstract implements RpcProcedureInterface
 {
     use JsonHelperTrait;
 
-    /** @var RpcRequest */
+    /**
+     * @var RpcRequest 
+     */
     protected $rpcRequest;
 
     /**

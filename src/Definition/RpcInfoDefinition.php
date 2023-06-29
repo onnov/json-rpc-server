@@ -14,6 +14,7 @@ namespace Onnov\JsonRpcServer\Definition;
 
 /**
  * Class RpcInfoDefinition
+ *
  * @package Onnov\JsonRpcServer\Definition
  */
 class RpcInfoDefinition
@@ -50,7 +51,7 @@ class RpcInfoDefinition
     }
 
     /**
-     * @param string $title
+     * @param  string $title
      * @return RpcInfoDefinition
      */
     public function setTitle(string $title): self
@@ -69,7 +70,7 @@ class RpcInfoDefinition
     }
 
     /**
-     * @param string|string[]|null $description
+     * @param  string|string[]|null $description
      * @return RpcInfoDefinition
      */
     public function setDescription($description): self
@@ -88,7 +89,7 @@ class RpcInfoDefinition
     }
 
     /**
-     * @param string $version
+     * @param  string $version
      * @return RpcInfoDefinition
      */
     public function setVersion(string $version): self

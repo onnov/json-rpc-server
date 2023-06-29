@@ -17,14 +17,19 @@ use Onnov\JsonRpcServer\Definition\RpcAuthDefinition;
 
 /**
  * Class RpcRun
+ *
  * @package Onnov\JsonRpcServer\Model
  */
 class RpcRun
 {
-    /** @var RpcFactoryInterface */
+    /**
+     * @var RpcFactoryInterface 
+     */
     private $rpcFactory;
 
-    /** @var string */
+    /**
+     * @var string 
+     */
     private $json;
 
     /**
@@ -32,11 +37,14 @@ class RpcRun
      */
     private $auth;
 
-    /** @var bool */
+    /**
+     * @var bool 
+     */
     private $responseCheck;
 
     /**
      * RunModel constructor.
+     *
      * @param mixed[] $data
      */
     public function __construct(array $data = [])
@@ -61,7 +69,7 @@ class RpcRun
     }
 
     /**
-     * @param RpcFactoryInterface $rpcFactory
+     * @param  RpcFactoryInterface $rpcFactory
      * @return RpcRun
      */
     public function setRpcFactory(RpcFactoryInterface $rpcFactory): self
@@ -80,7 +88,7 @@ class RpcRun
     }
 
     /**
-     * @param string $json
+     * @param  string $json
      * @return RpcRun
      */
     public function setJson(string $json): self
@@ -99,7 +107,7 @@ class RpcRun
     }
 
     /**
-     * @param RpcAuthDefinition $auth
+     * @param  RpcAuthDefinition $auth
      * @return RpcRun
      */
     public function setAuth(RpcAuthDefinition $auth): self
@@ -118,7 +126,7 @@ class RpcRun
     }
 
     /**
-     * @param bool $responseCheck
+     * @param  bool $responseCheck
      * @return RpcRun
      */
     public function setResponseCheck(bool $responseCheck): self
