@@ -29,8 +29,8 @@ class RunTest extends TestCase
 {
     /**
      * @dataProvider jsonProvider
-     * @param string $jsonIn
-     * @param string $jsonOut
+     * @param        string $jsonIn
+     * @param        string $jsonOut
      */
     public function testRun(string $jsonIn, string $jsonOut): void
     {
@@ -229,7 +229,7 @@ class RunTest extends TestCase
     }
 
     /**
-     * @param bool $has
+     * @param  bool $has
      * @return RpcFactoryInterface
      */
     private function getFactory(bool $has = true): RpcFactoryInterface

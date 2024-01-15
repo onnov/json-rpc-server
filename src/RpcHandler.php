@@ -70,8 +70,8 @@ class RpcHandler
         $rpcService = $this->getRpcService();
 
         /**
- * Парсим 
-*/
+         * Парсим
+         */
         try {
             $data = $rpcService->jsonParse($rpcRun->getJson());
 
@@ -120,18 +120,18 @@ class RpcHandler
 
         try {
             /**
- * валидируем и парсим JsonRPC 
-*/
+             * валидируем и парсим JsonRPC
+             */
             $rpcObj = $this->getRpcService()->getRpc($rpc);
 
             /**
- * Проверим авторизацию 
-*/
+             * Проверим авторизацию
+             */
             $this->authCheck($rpcObj->getMethod(), $rpcRun->getAuth());
 
             /**
- * Пытаемся выполнить запрос 
-*/
+             * Пытаемся выполнить запрос
+             */
             $res['result'] = $this->getApiExeService()->exe(
                 $rpcRun,
                 $rpcObj
@@ -163,11 +163,11 @@ class RpcHandler
                 ->getErrorByName('Throwable');
             $error->setData(
                 (object)[
-                'exception' => get_class($t),
-                'code'      => $t->getCode(),
-                'message'   => $t->getMessage(),
-                'file'      => $t->getFile(),
-                'line'      => $t->getLine(),
+                    'exception' => get_class($t),
+                    'code' => $t->getCode(),
+                    'message' => $t->getMessage(),
+                    'file' => $t->getFile(),
+                    'line' => $t->getLine(),
                 ]
             );
         }

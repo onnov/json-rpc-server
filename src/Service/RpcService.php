@@ -21,22 +21,22 @@ use stdClass;
 class RpcService
 {
     /**
-     * @var bool 
+     * @var bool
      */
     private $batch = true;
 
     /**
-     * @var JsonSchemaValidator 
+     * @var JsonSchemaValidator
      */
     private $validator;
 
     /**
-     * @var JsonRpcSchema 
+     * @var JsonRpcSchema
      */
     private $rpcSchema;
 
     /**
-     * @var JsonMapper 
+     * @var JsonMapper
      */
     private $mapper;
 

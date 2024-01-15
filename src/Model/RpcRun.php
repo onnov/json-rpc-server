@@ -23,12 +23,12 @@ use Onnov\JsonRpcServer\Definition\RpcAuthDefinition;
 class RpcRun
 {
     /**
-     * @var RpcFactoryInterface 
+     * @var RpcFactoryInterface
      */
     private $rpcFactory;
 
     /**
-     * @var string 
+     * @var string
      */
     private $json;
 
@@ -38,7 +38,7 @@ class RpcRun
     private $auth;
 
     /**
-     * @var bool 
+     * @var bool
      */
     private $responseCheck;
 

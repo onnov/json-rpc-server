@@ -54,8 +54,8 @@ class RpcDefinitionGenerator
             if (is_array($method['errors'])) {
                 $method['errors'] = array_values($method['errors']);
                 /**
- * @var RpcErrorDefinition $error 
-*/
+                 * @var RpcErrorDefinition $error
+                 */
                 foreach ($method['errors'] as &$error) {
                     $error = $error->toArray();
                 }
@@ -91,14 +91,14 @@ class RpcDefinitionGenerator
         $methods = [];
         foreach ($procedures as $procedure) {
             /**
- * @var RpcProcedureInterface $procObj 
-*/
+             * @var RpcProcedureInterface $procObj
+             */
             $procObj = $factory->get($procedure);
             $procDef = $procObj->getDefinition();
 
             /**
- * добавим ошибку авторизации 
-*/
+             * добавим ошибку авторизации
+             */
             if ($auth !== null && !in_array($procedure, $auth->getProcWithoutAuth(), true)) {
                 $procDef
                     ->setErrors(

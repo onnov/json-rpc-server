@@ -15,6 +15,7 @@ namespace Onnov\JsonRpcServer\Service;
 use JsonMapper;
 use JsonMapper_Exception;
 use Onnov\JsonRpcServer\Exception\ParseErrorException;
+use Onnov\JsonRpcServer\Exception\RpcArrayException;
 use Onnov\JsonRpcServer\RpcProcedureInterface;
 use Onnov\JsonRpcServer\Exception\MethodErrorException;
 use Onnov\JsonRpcServer\Exception\MethodNotFoundException;
@@ -31,17 +32,17 @@ class ApiExecService
     use JsonHelperTrait;
 
     /**
-     * @var JsonSchemaValidator 
+     * @var JsonSchemaValidator
      */
     protected $validator;
 
     /**
-     * @var JsonRpcSchema 
+     * @var JsonRpcSchema
      */
     protected $rpcSchema;
 
     /**
-     * @var JsonMapper 
+     * @var JsonMapper
      */
     private $mapper;
 
@@ -75,8 +76,8 @@ class ApiExecService
         $factory = $model->getRpcFactory();
         $method = $rpc->getMethod();
         /**
- * Проверим существование метода 
-*/
+         * Проверим существование метода
+         */
         if ($factory->has($method) === false) {
             throw new MethodNotFoundException(
                 'Method "' . $method . '" not found.'
@@ -84,7 +85,7 @@ class ApiExecService
         }
 
         /**
- * Создаем экземпляр класса
+         * Создаем экземпляр класса
          *
          * @var RpcProcedureInterface $class
          */
@@ -94,8 +95,8 @@ class ApiExecService
         //        $this->checkInterface($class, $method);
 
         /**
- * Валидируем парамертры ЗАПРОСА 
-*/
+         * Валидируем парамертры ЗАПРОСА
+         */
         if ($class->getDefinition()->getParams() !== null) {
             $this->getValidator()->validate(
                 $class->getDefinition()->getParams(),
@@ -119,15 +120,15 @@ class ApiExecService
         }
 
         /**
- * засетим в метод RpcRequest
-*/
+         * засетим в метод RpcRequest
+         */
         if (method_exists($class, 'setRpcRequest')) {
             $class->setRpcRequest(new RpcRequest($rpc, $paramsObject));
         }
 
         /**
- * Выполним метод 
-*/
+         * Выполним метод
+         */
         try {
             $res = $class->execute()->getResult();
         } catch (RpcNumberException $e) {
@@ -142,12 +143,14 @@ class ApiExecService
                 $data = $err->getData();
             }
             throw new MethodErrorException($message, $code, $e, $data);
+        } catch (RpcArrayException $e) {
+            throw new MethodErrorException($e->getMessage(), $e->getCode(), $e, $e->getData());
         }
 
         if ($model->isResponseCheck() && $class->getDefinition()->getResult() !== null) {
             /**
- * Валидируем парамертры ОТВЕТА 
-*/
+             * Валидируем парамертры ОТВЕТА
+             */
             $this->getValidator()->validate(
                 $class->getDefinition()->getResult(),
                 $res,

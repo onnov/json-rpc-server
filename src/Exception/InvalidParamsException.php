@@ -21,7 +21,7 @@ use Throwable;
 class InvalidParamsException extends RuntimeException
 {
     /**
-     * @var mixed[]|null 
+     * @var mixed[]|null
      */
     protected $data;
 

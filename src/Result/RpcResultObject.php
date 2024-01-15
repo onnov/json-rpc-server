@@ -22,7 +22,7 @@ use stdClass;
 class RpcResultObject implements RpcResultInterface
 {
     /**
-     * @var stdClass 
+     * @var stdClass
      */
     protected $result;
 

@@ -21,7 +21,7 @@ use Throwable;
 class InvalidRequestException extends RuntimeException
 {
     /**
-     * @var mixed[] 
+     * @var mixed[]
      */
     protected $data;
 

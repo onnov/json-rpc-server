@@ -21,7 +21,7 @@ abstract class RpcResultAbstract implements RpcResultInterface
 {
     //    /** @var array|string|int|float|null */
     /**
-     * @var mixed|null 
+     * @var mixed|null
      */
     protected $result = null;
 }

@@ -21,7 +21,7 @@ use Throwable;
 class ParseErrorException extends RuntimeException
 {
     /**
-     * @var mixed[] 
+     * @var mixed[]
      */
     protected $data;
 

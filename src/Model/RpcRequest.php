@@ -9,17 +9,17 @@ use stdClass;
 class RpcRequest
 {
     /**
-     * @var int|string|null 
+     * @var int|string|null
      */
     private $id;
 
     /**
-     * @var string 
+     * @var string
      */
     private $method;
 
     /**
-     * @var mixed[]|stdClass|null 
+     * @var mixed[]|stdClass|null
      */
     private $params;
 

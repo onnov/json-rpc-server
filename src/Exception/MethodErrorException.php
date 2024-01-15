@@ -22,7 +22,7 @@ use Throwable;
 class MethodErrorException extends RuntimeException
 {
     /**
-     * @var stdClass|null 
+     * @var stdClass|null
      */
     protected $data;
 

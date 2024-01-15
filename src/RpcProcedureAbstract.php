@@ -17,7 +17,7 @@ abstract class RpcProcedureAbstract implements RpcProcedureInterface
     use JsonHelperTrait;
 
     /**
-     * @var RpcRequest 
+     * @var RpcRequest
      */
     protected $rpcRequest;
 

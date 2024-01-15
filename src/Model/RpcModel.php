@@ -20,22 +20,22 @@ namespace Onnov\JsonRpcServer\Model;
 class RpcModel
 {
     /**
-     * @var string 
+     * @var string
      */
     private $jsonrpc;
 
     /**
-     * @var string 
+     * @var string
      */
     private $method;
 
     /**
-     * @var mixed|null 
+     * @var mixed|null
      */
     private $params;
 
     /**
-     * @var mixed|null 
+     * @var mixed|null
      */
     private $id;
 

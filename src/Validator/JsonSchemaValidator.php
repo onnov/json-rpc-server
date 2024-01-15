@@ -15,7 +15,6 @@ namespace Onnov\JsonRpcServer\Validator;
 use Onnov\JsonRpcServer\Traits\JsonHelperTrait;
 use Opis\JsonSchema\Errors\ErrorFormatter;
 use Opis\JsonSchema\Validator;
-use Opis\JsonSchema\Schema;
 use stdClass;
 use Onnov\JsonRpcServer\Exception\InvalidParamsException;
 
@@ -29,7 +28,7 @@ class JsonSchemaValidator
     use JsonHelperTrait;
 
     /**
-     * @var Validator 
+     * @var Validator
      */
     protected $validator;
 
@@ -57,7 +56,7 @@ class JsonSchemaValidator
 
         // Обернем схему, для правильной валидации
         $schemaPlus = (object)[
-            'type'       => 'object',
+            'type' => 'object',
             'properties' => (object)[
                 $dataName => $schema,
             ],
